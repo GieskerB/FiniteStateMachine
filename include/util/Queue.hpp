@@ -1,0 +1,4 @@
+#ifndef INCLUDE_UTIL_QUEUE_HPP_
+#define INCLUDE_UTIL_QUEUE_HPP_
+
+#endif /* INCLUDE_UTIL_QUEUE_HPP_ */
