@@ -3,8 +3,9 @@
 #include "includes.inc"
 
 int main() {
-  // td::cout << "new Run" << std::endl;
-  // std::string test = "test";
+  for (int i = 0; i < 5; i++) {
+    std::cout << "Hello, World!" << std::endl;
+  }
 
   // Entry<std::string> entry = Entry<std::string>(&test);
 
