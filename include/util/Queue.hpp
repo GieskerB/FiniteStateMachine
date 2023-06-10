@@ -3,21 +3,24 @@
 
 #include "Entry.hpp"
 
-template <typename T>
+template<typename T>
 class Queue {
- private:
-  Entry<T>*head, tail;
+private:
+	Entry<T> *head, *tail;
 
- public:
-  Queue();
+public:
+	Queue();
+	~Queue();
 
-  void enqueue(const T& element);
-  T& dequeue();
-  T& head();
+	void enqueue(T *element);
+	void enqueue(const T &element);
 
-  bool isEmpty();
-  void clear();
-  int size();
+	T* dequeue();
+	T* peak();
+
+	bool isEmpty();
+	void clear();
+	int size();
 };
 
 #endif /* INCLUDE_UTIL_QUEUE_HPP_ */

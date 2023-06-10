@@ -3,11 +3,21 @@
 #include "includes.inc"
 
 int main() {
-  for (int i = 0; i < 5; i++) {
-    std::cout << "Hello, World!" << std::endl;
-  }
+	std::string name = "Bjarne";
 
-  // Entry<std::string> entry = Entry<std::string>(&test);
+	Queue<std::string> queue = Queue<std::string>();
+	queue.enqueue(&name);
 
-  return 0;
+	std::string str = *queue.peak();
+
+	std::cout << str << std::endl;
+
+	queue.dequeue();
+	std::cout << str << std::endl;
+
+
+	queue.dequeue();
+	std::cout << str << std::endl;
+
+	return 0;
 }

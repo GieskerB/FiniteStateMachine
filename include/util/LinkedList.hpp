@@ -3,12 +3,12 @@
 
 #include "Entry.hpp"
 
-template <typename T>
+template<typename T>
 class LinkedList {
- private:
-  Entry<E>*start, end;
+private:
+	Entry<T> *start, *end;
 
- public:
+public:
 };
 
 #endif /* INCLUDE_UTIL_LINKEDLIST_HPP_ */
