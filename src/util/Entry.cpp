@@ -3,55 +3,53 @@
 
 #include "../../include/util/Entry.hpp"
 
-template<typename T>
-Entry<T>::Entry() :
-		Entry(nullptr) {
-}
-template<typename T>
-Entry<T>::Entry(T *element) :
-		Entry(element, nullptr) {
-}
-template<typename T>
-Entry<T>::Entry(T *element, Entry<T> *predecessor) :
-		Entry(element, predecessor, nullptr) {
-}
+template <typename T>
+Entry<T>::Entry() : Entry(nullptr) {}
 
-template<typename T>
-Entry<T>::Entry(T *element, Entry<T> *predecessor, Entry<T> *successor) :
-		element(element), pred(predecessor), succ(successor) {
-}
+template <typename T>
+Entry<T>::Entry(T *element) : Entry(element, nullptr) {}
 
-template<typename T>
+template <typename T>
+Entry<T>::Entry(T *element, Entry<T> *predecessor)
+	: Entry(element, predecessor, nullptr) {}
+
+
+template <typename T>
+Entry<T>::Entry(T *element, Entry<T> *predecessor, Entry<T> *successor)
+	: element(element), pred(predecessor), succ(successor) {}
+
+
+template <typename T>
 Entry<T>::~Entry() {
 	delete this->element;
 }
 
-template<typename T>
-T* Entry<T>::getElement() {
+template <typename T>
+T *Entry<T>::getElement() const {
 	return this->element;
 }
 
-template<typename T>
-bool Entry<T>::hasPredecessor() {
+template <typename T>
+bool Entry<T>::hasPredecessor() const {
 	return !this->pred == nullptr;
 }
 
-template<typename T>
-bool Entry<T>::hasSuccessor() {
+template <typename T>
+bool Entry<T>::hasSuccessor() const {
 	return !this->succ == nullptr;
 }
 
-template<typename T>
-Entry<T>* Entry<T>::getPredecessor() {
+template <typename T>
+Entry<T> *Entry<T>::getPredecessor() const {
 	return this->pred;
 }
 
-template<typename T>
-Entry<T>* Entry<T>::getSuccessor() {
+template <typename T>
+Entry<T> *Entry<T>::getSuccessor() const {
 	return this->succ;
 }
 
-template<typename T>
+template <typename T>
 bool Entry<T>::setPredecessor(Entry<T> *predecessor) {
 	if (this == predecessor) {
 		return false;
@@ -60,7 +58,7 @@ bool Entry<T>::setPredecessor(Entry<T> *predecessor) {
 	return true;
 }
 
-template<typename T>
+template <typename T>
 bool Entry<T>::setSuccessor(Entry<T> *successor) {
 	if (this == successor) {
 		return false;

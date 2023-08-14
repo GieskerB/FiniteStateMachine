@@ -16,27 +16,27 @@ Queue<T>::~Queue() {
 template<typename T>
 void Queue<T>::enqueue(T *element) {
 	Entry<T> *newTail = new Entry<T>(element);
-	if (this->head == nullptr) {
+	if (this->isEmpty()) {
 		this->head = newTail;
-		this->tail = this->head;
+		this->tail = newTail;
 	} else {
-		newTail->setSuccessor(this->head);
+		this->tail->setSuccessor(newTail);
 		this->tail = newTail;
 	}
 }
 
 template<typename T>
 void Queue<T>::enqueue(const T &element) {
-	this->enqueue(new T(element));
+	this->enqueue(*element);
 }
 
 template<typename T>
 T* Queue<T>::dequeue() {
 	T *element = this->head->getElement();
 	Entry<T> *tempEntry = this->head;
-	tempEntry = this->head;
-	this->head = this->head->getSuccessor();
-	if (this->head == nullptr) {
+	this->head =
+			this->head->hasSuccessor() ? this->head->getSuccessor() : nullptr;
+	if (this->isEmpty()) {
 		this->tail = nullptr;
 	}
 	delete tempEntry;
@@ -44,36 +44,30 @@ T* Queue<T>::dequeue() {
 }
 
 template<typename T>
-T* Queue<T>::peak() {
+T* Queue<T>::peak() const {
 	return this->head->getElement();
 }
 
 template<typename T>
-bool Queue<T>::isEmpty() {
+bool Queue<T>::isEmpty() const {
 	return this->head == nullptr;
 }
 
 template<typename T>
 void Queue<T>::clear() {
-	Entry<T> *temp, *tempEntry = this->head;
-	while (tempEntry != nullptr) {
-		temp = tempEntry;
-		tempEntry = tempEntry->getSuccessor();
-		delete temp;
+	if (this->isEmpty()) {
+		return;
 	}
+
+	Entry<T> *temp;
+	while (this->head->hasSuccessor()) {
+		temp = this->head->getSuccessor();
+		delete this->head;
+		this->head = temp;
+	}
+	delete this->head;
 	this->head = nullptr;
 	this->tail = nullptr;
-}
-
-template<typename T>
-int Queue<T>::size() {
-	Entry<T> *tempEntry = this->head;
-	int size = 0;
-	while (tempEntry != nullptr) {
-		tempEntry = tempEntry->getSuccessor();
-		size++;
-	}
-	return size;
 }
 
 #endif /* SRC_UTIL_QUEUE_CPP_ */

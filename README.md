@@ -7,6 +7,36 @@ This is an attempt to create and simulate different types of finite state machin
 * TuringMachine
   * If possible we will also give the use the option to create a non deterministic version for each Machine
 
+Erstellen eines solchen Atomaten:
+
+* DFA: 5 Tupel
+  * Zustände
+  * Alphabet
+  * Übergangsfunktionen
+  * Startzusand
+  * Endzustände
+    * X -> yY
+
+* PDA: 7 Tupel
+  * Zustände
+  * Wortalphabet
+  * Kelleralphabet
+  * Übergangsfunktionen
+  * KellerZeichen
+  * Startzusand
+  * Endzustände
+
+* Turing 7 Tupel
+  * Zustände
+  * Wortalphabet
+  * Kelleralphabet
+  * Übergangsfunktionen
+  * Startzusand
+  * Endzustände
+
+
+
+
 <!-- Headings -->
 # Heading 1
 ## Heading 2

@@ -3,21 +3,56 @@
 #include "includes.inc"
 
 int main() {
-	std::string name = "Bjarne";
+	DynArray<int> dynArray;
 
-	Queue<std::string> queue = Queue<std::string>();
-	queue.enqueue(&name);
+	// Test addFirst
+	for (int i = 0; i < 10; ++i) {
+		dynArray.addFirst(new int(i));
+	}
 
-	std::string str = *queue.peak();
+	// Test addLast
+	for (int i = 10; i < 20; ++i) {
+		dynArray.addLast(new int(i));
+	}
 
-	std::cout << str << std::endl;
+	// Test get and set
+	for (int i = 0; i < dynArray.size(); ++i) {
+		std::cout << *dynArray.get(i) << " ";
+	}
+	std::cout << std::endl;
 
-	queue.dequeue();
-	std::cout << str << std::endl;
+	dynArray.set(5, new int(99));
+	std::cout << "After set: " << *dynArray.get(5) << std::endl;
 
+	// Test remove
+	dynArray.remove(8);
+	std::cout << "After remove: ";
+	for (int i = 0; i < dynArray.size(); ++i) {
+		std::cout << *dynArray.get(i) << " ";
+	}
+	std::cout << std::endl;
 
-	queue.dequeue();
-	std::cout << str << std::endl;
+	// Test add at specific index
+	dynArray.add(3, new int(100));
+	std::cout << "After add at index 3: ";
+	for (int i = 0; i < dynArray.size(); ++i) {
+		std::cout << *dynArray.get(i) << " ";
+	}
+	std::cout << std::endl;
+
+	// Test removeFirst and removeLast
+	dynArray.removeFirst();
+	dynArray.removeLast();
+	std::cout << "After removeFirst and removeLast: ";
+	for (int i = 0; i < dynArray.size(); ++i) {
+		std::cout << *dynArray.get(i) << " ";
+	}
+	std::cout << std::endl;
+
+	// Test clear and isEmpty
+	dynArray.clear();
+	std::cout << "Is empty: " << (dynArray.isEmpty() ? "Yes" : "No")
+			<< std::endl;
 
 	return 0;
 }
