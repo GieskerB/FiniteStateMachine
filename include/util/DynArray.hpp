@@ -23,7 +23,7 @@ private:
 	 */
 	int currentSize, maxSize;
 	/*
-	 * T** <=> T *elements[]: Its a array of pointer to Objects of type T
+	 * T** <=> *T elements[]: Its a array of pointer to Objects of type T
 	 */
 	T **elements;
 
@@ -45,9 +45,9 @@ public:
 	/*
 	 * Simple way to get specific Elements from the DynArray (readOnly)
 	 */
-	T* getFirst() const;
-	T* getLast() const;
-	T* get(const int index) const;
+	T *getFirst() const;
+	T *getLast() const;
+	T *get(const int index) const;
 
 	/*
 	 * Setting / Overwriting an element in the DynArray
