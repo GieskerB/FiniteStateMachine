@@ -10,7 +10,7 @@ class Tree {
 private:
     T *value;
     Tree<T> *parent;
-    DynArray<Knot> children;
+    DynArray<Tree> children;
 
 public:
     Tree();

@@ -1,3 +1,7 @@
+#ifndef INCLUDE_MACHINE_STATE_HPP
+#define INCLUDE_MACHINE_STATE_HPP
+
+
 #include "Transition.hpp"
 #include "../util/DynArray.hpp"
 
@@ -7,24 +11,29 @@ class State {
 
 private:
 
-    std::string name;
-    bool initial;
-    bool final;
+    const std::string name;
+    const bool initial;
+    const bool final;
     DynArray<Transition> transitions;
 
 public:
 
-    State();
+    State(std::string name, bool initial, bool final);
     ~State();
 
-    std::string getName() const;
+    const std::string &getName() const;
 
     bool isInitial() const;
     bool isFinal() const;
 
-    State &getFollowState(char letter);
-    DynArray<State> getFollowStates(char letter);
+    void addTransition(Transition &transition);
 
-    State &getRandomState();
+    bool hasFollowState(char letter, char flags);
+
+    State *getFollowState(char letter, char flags);
+    DynArray<State> getFollowStates(char letter, char flag);
+
+    State *getRandomState();
 };
 
+#endif

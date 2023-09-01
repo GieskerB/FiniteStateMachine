@@ -1,12 +1,15 @@
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 
 #include "includes.inc"
-#include "include/util/Knot.hpp"
-#include "src/util/Knot.cpp"
 
 int main() {
-	Knot<int> knot;
-	Knot<int> knot2 = Knot<int>(&knot);
+	std::srand((unsigned)std::time(nullptr));
+
+
+	Tree<int> knot;
+	Tree<int> knot2 = Tree<int>(&knot);
 	std::cout << knot2.hasParent();
 	// std::cout << "Hello,World!";
 
