@@ -9,10 +9,14 @@ class DFM {
 
 private:
 
+    // List of all states
     DynArray<State> states;
+    // Always the current State. Initialised by the initialState
     State *currentState;
 
+    // Step by Step checking each letter
     bool nextLetter(char letter);
+    // Saying when word is done. If currentState is final its accepted else not
     bool stop();
 
 public:
@@ -20,13 +24,21 @@ public:
     DFM();
     DFM(State *initialState);
 
+    /*
+     * Simple Adder Methods
+     */
     void addState(State *state);
     void addStates(DynArray<State> *states);
 
+    /*
+     * Simple Setter Methods
+     */
     void setStates(DynArray<State> *states);
-
     void setInitialState(State *state);
 
+    /*
+     * Giving a specific word the DFM will check if it belongs to the Language described by this DFM
+     */
     bool accept(std::string word);
 
 };

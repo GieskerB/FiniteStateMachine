@@ -3,7 +3,7 @@
 #include <ctime>
 #include "../../include/machine/State.hpp"
 
-State::State(std::string name, bool initial, bool final) :
+State::State(std::string name, bool final, bool initial) :
     name(name), initial(initial), final(final), transitions(3) {
 
 }

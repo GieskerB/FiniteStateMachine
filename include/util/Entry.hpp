@@ -10,7 +10,7 @@ class Entry {
 private:
 
 	/*
-	 * Entry stores a pointer to the element which it will
+	 * Entry stores a pointer to the element which it will save
 	 */
 	T *element;
 
@@ -23,7 +23,7 @@ public:
 	/*
 	 *  Simple constructor-chaining:
 	 */
-	// Empty default constructor
+	 // Empty default constructor
 	Entry();
 	// Only storing an element nothing more (maybe for the first element in a ADT)
 	Entry(T *element);
@@ -37,7 +37,7 @@ public:
 	/*
 	 * returns stored element in this Entry
 	 */
-	T* getElement() const;
+	T *getElement() const;
 
 	/*
 	 * Check functions to see if the is a next or previous element
@@ -49,8 +49,8 @@ public:
 	 * Getter for the neighboring Elements.
 	 * Use hasPredecessor() or hasSuccessor() first
 	 */
-	Entry<T>* getPredecessor() const;
-	Entry<T>* getSuccessor() const;
+	Entry<T> *getPredecessor() const;
+	Entry<T> *getSuccessor() const;
 
 	/*
 	 * Getter for the neighboring Elements.

@@ -11,29 +11,38 @@ class State {
 
 private:
 
+    // Name like a identifyer only for User
     const std::string name;
-    const bool initial;
-    const bool final;
+    // Frags for each State
+    const bool initial, final;
     DynArray<Transition> transitions;
 
 public:
 
-    State(std::string name, bool initial, bool final);
+    // Simple constructor default final and initial being false
+    State(std::string name, bool final = false, bool initial = false);
+    // Deconstructor
     ~State();
 
+    /*
+     * Simple Getter Methods
+     */
     const std::string &getName() const;
-
-    bool isInitial() const;
-    bool isFinal() const;
-
-    void addTransition(Transition &transition);
-
-    bool hasFollowState(char letter, char flags);
-
     State *getFollowState(char letter, char flags);
     DynArray<State> getFollowStates(char letter, char flag);
 
     State *getRandomState();
+
+    /*
+     * Simple Check Methods
+     */
+    bool isInitial() const;
+    bool isFinal() const;
+    bool hasFollowState(char letter, char flags);
+
+    // Adding a new Transitions to the State without adding the same one twice
+    void addTransition(Transition &transition);
+
 };
 
 #endif

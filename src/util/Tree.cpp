@@ -30,7 +30,7 @@ DynArray<Tree<T> > Tree<T>::getChildren() {
     return children;
 }
 template<typename T>
-DynArray<Tree<T> > Tree<T>::getChild(int index) {
+Tree<T>  Tree<T>::getChild(int index) {
     return children->get(index);
 }
 
