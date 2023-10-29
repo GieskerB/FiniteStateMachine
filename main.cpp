@@ -1,68 +1,71 @@
-#include <iostream>
+#include <io.h>
+#include <cstdio>
 #include <cstdlib>
 #include <ctime>
+#include <iostream>
+#include <stdexcept>
+#include <string>
 
-#include "includes.inc"
+#include <filesystem>
 
-int main() {
-	std::srand((unsigned)std::time(nullptr));
+#include <string_view>
+#include <memory>
+
+/*
+ * 1. Fehler Management -> exceptions (nachrichten)
+ * 1b. assertions
+ * 2. Pointer... (smartpointer)
+ * 3. keine Shadowcopy -> delete copy const und = operator
+ * 4. MinGw updaten (cygwin)
+ */
+
+#include "include/machine/FiniteStateMachine.hpp"
+#include "include/machine/TuringMachine.hpp"
+
+Machine* initMachine(const std::string &INPUT_FILE_NAME) {
+	int nameIndex = INPUT_FILE_NAME.length() - 1;
+	while (nameIndex >= 0 && INPUT_FILE_NAME.at(nameIndex) != '.') {
+		nameIndex--;
+	}
+	if (nameIndex < 0) {
+		throw std::invalid_argument(
+				"incorrect filename!\nIt must have an file extension.");
+	}
+	const std::string FILE_EXTENSION = INPUT_FILE_NAME.substr(nameIndex,
+			INPUT_FILE_NAME.length() - nameIndex);
+
+	Machine *machine;
+	if (FILE_EXTENSION == ".tm") {
+		machine = new TuringMachine(INPUT_FILE_NAME);
+	} else if (FILE_EXTENSION == ".fsm") {
+		machine = new FiniteStateMachine(INPUT_FILE_NAME);
+	} else {
+		machine = nullptr;
+		throw std::invalid_argument(
+				"incorrect file extension!\n" + INPUT_FILE_NAME
+						+ " is currently not supported");
+	}
+
+	machine->accept("");
+
+	return machine;
+}
 
 
-	Tree<int> knot;
-	Tree<int> knot2 = Tree<int>(&knot);
-	std::cout << knot2.hasParent();
-	// std::cout << "Hello,World!";
+int main(int argc, char** argv) {
+	//Hello
+	std::srand((unsigned) std::time(nullptr));
 
-	// DynArray<int> dynArray;
+    std::string_view a;
 
-	// // Test addFirst
-	// for (int i = 0; i < 10; ++i) {
-	// 	dynArray.addFirst(new int(i));
-	// }
+	//const std::filesystem::path CURRENT_DIR = std::filesystem::current_path();
+    //const std::string pathStr =CURRENT_DIR.string();
+    //Machine *machine = initMachine(pathStr + "\\" + INPUT_FILE_NAME);
 
-	// // Test addLast
-	// for (int i = 10; i < 20; ++i) {
-	// 	dynArray.addLast(new int(i));
-	// }
+    const std::string INPUT_FILE_NAME = "Input.fsm";
+    Machine *machine = initMachine(INPUT_FILE_NAME);
 
-	// // Test get and set
-	// for (int i = 0; i < dynArray.size(); ++i) {
-	// 	std::cout << *dynArray.get(i) << " ";
-	// }
-	// std::cout << std::endl;
-
-	// dynArray.set(5, new int(99));
-	// std::cout << "After set: " << *dynArray.get(5) << std::endl;
-
-	// // Test remove
-	// dynArray.remove(8);
-	// std::cout << "After remove: ";
-	// for (int i = 0; i < dynArray.size(); ++i) {
-	// 	std::cout << *dynArray.get(i) << " ";
-	// }
-	// std::cout << std::endl;
-
-	// // Test add at specific index
-	// dynArray.add(3, new int(100));
-	// std::cout << "After add at index 3: ";
-	// for (int i = 0; i < dynArray.size(); ++i) {
-	// 	std::cout << *dynArray.get(i) << " ";
-	// }
-	// std::cout << std::endl;
-
-	// // Test removeFirst and removeLast
-	// dynArray.removeFirst();
-	// dynArray.removeLast();
-	// std::cout << "After removeFirst and removeLast: ";
-	// for (int i = 0; i < dynArray.size(); ++i) {
-	// 	std::cout << *dynArray.get(i) << " ";
-	// }
-	// std::cout << std::endl;
-
-	// // Test clear and isEmpty
-	// dynArray.clear();
-	// std::cout << "Is empty: " << (dynArray.isEmpty() ? "Yes" : "No")
-	// 	<< std::endl;
+	delete machine;
 
 	return 0;
 }

@@ -31,6 +31,7 @@ Erstellen eines solchen Atomaten:
   * Wortalphabet
   * Kelleralphabet
   * Übergangsfunktionen
+  * KellerZeichen
   * Startzusand
   * Endzustände
 

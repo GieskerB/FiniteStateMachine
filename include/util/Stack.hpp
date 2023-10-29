@@ -1,5 +1,4 @@
-#ifndef INCLUDE_UTIL_STACK_HPP_
-#define INCLUDE_UTIL_STACK_HPP_
+#pragma once
 
 #include "Entry.hpp"
 
@@ -15,38 +14,72 @@ public:
 	/*
 	 * Creating a new empty Stack
 	 */
-	Stack();
+	Stack() :
+			top(nullptr) {
+	}
 
 	/*
 	 * Deleting the Stack completely
 	 */
-	~Stack();
+	~Stack() {
+		this->clear();
+	}
 
 	/*
 	 * Adding a new element onto the Stack
 	 */
-	void push(T *element);
-	void push(const T &element);
+	void push(T *element) {
+		Entry<T> *newTop = new Entry<T>(element);
+		if (this->isEmpty()) {
+			this->top = newTop;
+		} else {
+			newTop->setPredecessor(this->top);
+			this->top = newTop;
+		}
+	}
+	void push(const T &element) {
+		this->push(*element);
+	}
 
 	/*
 	 * Removing the top most element from the Stack
 	 */
-	T* pop();
+	T* pop() {
+		Entry<T> *oldTop = this->top;
+		this->top = oldTop->getPredecessor();
+		T *elem = oldTop->getElement();
+		delete oldTop;
+		return elem;
+	}
 
 	/*
 	 * simply looking at the top most element of the Stack without removing it
 	 */
-	T* peak() const;
+	T* peak() const {
+		return this->top->getElement();
+	}
 
 	/*
 	 * Checks if Stack has at least one element stored in it or not
 	 */
-	bool isEmpty() const;
+	bool isEmpty() const {
+		return this->top == nullptr;
+	}
 
 	/*
 	 * Deletes the content of the Stack completely
 	 */
-	void clear();
+	void clear() {
+		if (this->isEmpty()) {
+			return;
+		}
+		Entry<T> *temp;
+		while (this->top->hasPredecessor()) {
+			temp = this->top->getPredecessor();
+			delete this->top;
+			this->top = temp;
+		}
+		delete this->top;
+		this->top = nullptr;
+	}
 };
-
-#endif /* INCLUDE_UTIL_STACK_HPP_ */
