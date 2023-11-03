@@ -1,6 +1,5 @@
 #include "include/util/DynArray.hpp"
 #include "include/util/Entry.hpp"
-#include "include/util/LinkedList.hpp"
 #include "include/util/Queue.hpp"
 #include "include/util/Stack.hpp"
 #include "include/util/Tree.hpp"
@@ -13,5 +12,9 @@
 
 // ==============================================
 
-//#include "src/machine/State.cpp"
-//#include "src/machine/Transition.cpp"
+
+#include "src/machine/State.cpp"
+#include "src/machine/Transition.cpp"
+#include "src/machine/Machine.cpp"
+#include "src/machine/FiniteStateMachine.cpp"
+#include "src/machine/TuringMachine.cpp"

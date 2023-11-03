@@ -1,97 +1,75 @@
 #pragma once
 
-/*
- * Generic Entry class for other ADTs like Stack Queue and LinkedList
- */
+#include <memory>
+#include <stdexcept>
 
+/*
+The Entry class is a generic container designed to manage elements in a linked list. It is intended to work with different data types using C++ templates.
+
+Key Features:
+- Generics: This Entry class is template-based, allowing it to store elements of various data types.
+- Linked List: It represents an element in a linked list and maintains a reference to the next Entry in the list.
+
+Constructor Options:
+- The Entry class can be constructed with two variations:
+1. An Entry with only an element, where it stores the element.
+2. An Entry with both an element and a reference to the next Entry in line.
+
+Access and Modification:
+- It provides methods to access and manipulate the element and the next Entry in the list.
+- 'getElement': Returns the element stored in the Entry.
+- 'hasNextEntry': Checks if there is a next Entry in the list.
+- 'getNextEntry': Retrieves the shared pointer to the next Entry.
+- 'setNextEntry': Sets the next Entry in the list.
+
+Usage:
+- The Entry class is used in the creation of linked data structures such as stack and queues.
+
+*/
 template<typename T>
 class Entry {
 private:
 
-	/*
-	 * Entry stores a pointer to the element which it will save
-	 */
-	T *element;
+    // Usage of shared pointers to make memory management easier.
+	// Element stores a pointer to the value that the data structure are managing.
+	const std::shared_ptr<T> element;
 
-	/*
-	 * Also having a reference to the previous or next element, if necessary
-	 */
-	Entry<T> *pred, *succ;
+	// nextEntry stores a pointer to the following entry in the data structure.
+	std::shared_ptr<Entry<T>> nextEntry;
 
 public:
-	/*
-	 *  Simple constructor-chaining:
-	 */
-	// Empty default constructor
-	Entry() :
-			Entry(nullptr) {
-	}
-	// Only storing an element nothing more (maybe for the first element in a ADT)
-	Entry(T *element) :
-			Entry(element, nullptr) {
-	}
-	// Element and predecessor: e.g. Stack
-	Entry(T *element, Entry<T> *predecessor) :
-			Entry(element, predecessor, nullptr) {
-	}
-	// All at once: e.g. LinkedList
-	Entry(T *element, Entry<T> *predecessor, Entry<T> *successor) :
-			element(element), pred(predecessor), succ(successor) {
-	}
-	// Destructor
-	~Entry() {
-		delete this->element;
+
+	// Default Constructor is useless in this context
+	Entry() = delete;
+
+	// Simple storing a value without the pointer to a next entry.
+	Entry(const T &element) :
+		element(std::make_shared<T>(element)) {}
+	// storing the element and pointer to the next entry.
+	Entry(const T &element, const Entry<T> &nextEntry) :
+		element(std::make_shared<T>(element)),
+		nextEntry(std::make_shared<Entry<T>>(nextEntry)) {}
+
+    // Default destructor, because no need for destruction of any pointers.
+	~Entry() = default;
+
+    // Returns the element store the user wants to be stored in the datastructures
+	T getElement() const {
+		return *this->element;
 	}
 
-	/*
-	 * returns stored element in this Entry
-	 */
-	T* getElement() const {
-		return this->element;
+    // Check if the current Entry points to a next one
+	bool hasNextEntry() const {
+		return this->nextEntry.get() != nullptr;
 	}
 
-	/*
-	 * Check functions
-	 */
-	bool hasPredecessor() const;
-	bool hasSuccessor() const;
-	/*
-	 * Getter for the neighboring Elements.
-	 * Use hasPredecessor() or hasSuccessor() first
-	 */
-	Entry<T>* getPredecessor() const {
-		return this->pred;
-	}
-	Entry<T>* getSuccessor() const {
-		return this->succ;
+    // Returning the std::shared_pointer to the next entry
+	std::shared_ptr<Entry<T>> getNextEntry() const {
+		return this->nextEntry;
 	}
 
-	/*
-	 * Getter for the neighboring Elements.
-	 * returns true if neighbors was successfully placed
-	 */
-	bool setPredecessor(Entry<T> *predecessor) {
-		if (this == predecessor) {
-			return false;
-		}
-		this->pred = predecessor;
-		return true;
-	}
-	bool setSuccessor(Entry<T> *successor) {
-		if (this == successor) {
-			return false;
-		}
-		this->succ = successor;
-		return true;
+    // Overwrites the next Entry with a new one.
+	void setNextEntry(const Entry<T> &newNextEntry) {
+		this->nextEntry = std::make_shared<Entry<T>>(newNextEntry);
 	}
 };
-
-template<typename T>
-bool Entry<T>::hasSuccessor() const {
-    return !this->succ == nullptr;
-}
-
-template<typename T>
-bool Entry<T>::hasPredecessor() const {
-    return !this->pred == nullptr;
-}

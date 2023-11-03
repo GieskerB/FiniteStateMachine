@@ -2,90 +2,91 @@
 
 #include "Entry.hpp"
 
+/*
+   This is a versatile generic Queue class, a fundamental data structure that follows the First-In-First-Out (FIFO) principle. It emulates a queue of items, where the first item added is the first to be removed.
+
+   Key Features:
+   - Generics: This Queue class is template-based, allowing it to work with a wide range of data types, making it highly adaptable for various applications.
+
+   Basic Operations:
+   - 'enqueue': Adds an element to the back of the queue.
+   - 'dequeue': Removes and returns the front element from the queue.
+   - 'isEmpty': Checks whether the queue is empty.
+   - 'clear': Removes all elements from the queue, effectively emptying the queue.
+
+   How to Use:
+   - To employ this Queue, declare an instance with the desired data type (e.g., Queue<int> for integers) and perform 'enqueue', 'dequeue', and 'isEmpty' operations as needed.
+*/
+
 template<typename T>
 class Queue {
 private:
-	/*
-	 * Referencing the head and tail of the Queue
-	 */
-	Entry<T> *head, *tail;
+
+    // Usage of shared pointers to make memory management easier.
+    // Head and tail store pointers to the first and last element of the queue.
+    // Ares a null pointers by default
+	std::shared_ptr<Entry<T>> head, tail;
 
 public:
-	/*
-	 * Creating a new empty Queue
-	 */
-	Queue() :
-			head(nullptr), tail(nullptr) {
-	}
 
-	/*
-	 * Deleting the Queue completely
-	 */
+    // Default constructor, because no need for initialization of any variables.
+	Queue() = default;
+
+    // When deleting a queue first clear its content.
 	~Queue() {
 		this->clear();
 	}
 
-	/*
-	 * Adding a new element into the back of the Queue
-	 */
-	void enqueue(T *element) {
-		Entry<T> *newTail = new Entry<T>(element);
+    /*
+     * @Lilith hier bitte nochmal genu gucken. Bin mir selber nciht 100%ig sicher,
+     * aber ich weiß nicht ob das so richtig funktioniert wenn du newTail einfach
+     * per gleich zu head und teil zuweist. Hatte das zwei mal mit std::make_shared
+     * gemacht, aber wie gesagt kann ich irren :)
+     */
+
+	// Enqueues a new element to the queue
+	void enqueue(const T &element) {
+		std::shared_ptr<Entry<T>> newTail = std::make_shared<Entry<T>>(element);
 		if (this->isEmpty()) {
 			this->head = newTail;
 			this->tail = newTail;
-		} else {
-			this->tail->setSuccessor(newTail);
+		}
+		else {
+            // If it's not empty connect the new head to the previous head.
+			this->tail->setNextEntry(*newTail);
 			this->tail = newTail;
 		}
 	}
-	void enqueue(const T &element) {
-		this->enqueue(*element);
-	}
 
-	/*
-	 * Removing the first element from the Queue
-	 */
-	T* dequeue() {
-		T *element = this->head->getElement();
-		Entry<T> *tempEntry = this->head;
-		this->head = this->head->getSuccessor();
+    // Removes the first element from the queue and returns it.
+	T dequeue() {
+		if (this->isEmpty) { throw std::runtime_error("unable to dequeue form empty queue"); }
+		T element = this->head->getElement();
+		this->head = this->head->getNextEntry();
 		if (this->isEmpty()) {
-			this->tail = nullptr;
+			this->tail.reset();
 		}
-		delete tempEntry;
 		return element;
 	}
 
-	/*
-	 * simply looking at the first element of the Queue without removing it
-	 */
-	T* peak() const {
+    // Only looks at the head without removing it from the queue.
+	T peek() const {
+		if (this->isEmpty) { throw std::runtime_error("unable to peek form empty queue"); }
 		return this->head->getElement();
 	}
 
-	/*
-	 * Checks if Queue has at least one element stored in it or not
-	 */
+    // Check if the queue has no elements stored.
 	bool isEmpty() const {
-		return this->head == nullptr;
+		return this->head.get() == nullptr;
 	}
 
-	/*
-	 * Deletes the content of the Queue completely
-	 */
+    // Removes all the elements from the queue.
 	void clear() {
-		if (this->isEmpty()) {
-			return;
-		}
+        if (this->isEmpty()) {
+            return;
+        }
+        this->head.reset();
+        this->tail.reset();
 
-		Entry<T> *temp;
-		while (this->head->hasSuccessor()) {
-			temp = this->head->getSuccessor();
-			delete this->head;
-			this->head = temp;
-		}
-		delete this->head;
-		this->head = nullptr;
-		this->tail = nullptr;
 	}
 };

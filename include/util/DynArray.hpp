@@ -4,13 +4,8 @@
 #include <cstddef>
 #include <string>
 
-namespace std {
 class invalid_argument;
-} /* namespace std */
-
-namespace std {
 struct forward_iterator_tag;
-} /* namespace std */
 
 template<typename T>
 class DynArray {
