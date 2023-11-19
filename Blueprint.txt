@@ -1,0 +1,44 @@
+\ Als Escape Character statt special Characters
+
+Wichtige Reihenfolge:
+
+0.Zeile: Identifikator
+
+1. Zeile: alle NICHT_TERMINALE (Getrennt mit Komma)
+2. Zeile: Startzustand
+3. Zeile:  alle Endzustände (Getrennt mit Komma)
+4. Zeile: alle TERMINAL (Getrennt mit Komma)
+4a. Bandalphabet
+4b. leeres Symbol
+5 - n. Zeile: Alle Profuktionsregeln 
+    (in einer großen Klammer: in '{ ... }' )
+
+.fsm -> FiniteStateMachine
+.tm -> TuringMachine
+
+// Special Chancters: {},->
+
+A,B,C,D,E,F
+a,b,c,d,e,f
+{
+    A,a->B
+    D,d->C
+    C,a->B
+    ...
+}
+C
+D,E,A
+
+
+// Special Chancters: (): LRS
+
+A,B,C,D,E,F
+a,b,c,d,e,f
+~,*,+,#
+{
+    A,(b,a:L)->B
+    ...
+}
+#
+C
+D,E,A

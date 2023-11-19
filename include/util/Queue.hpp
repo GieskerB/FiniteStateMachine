@@ -22,27 +22,20 @@ template<typename T>
 class Queue {
 private:
 
-    // Usage of shared pointers to make memory management easier.
-    // Head and tail store pointers to the first and last element of the queue.
-    // Ares a null pointers by default
+	// Usage of shared pointers to make memory management easier.
+	// Head and tail store pointers to the first and last element of the queue.
+	// Ares a null pointers by default
 	std::shared_ptr<Entry<T>> head, tail;
 
 public:
 
-    // Default constructor, because no need for initialization of any variables.
+	// Default constructor, because no need for initialization of any variables.
 	Queue() = default;
 
-    // When deleting a queue first clear its content.
+	// When deleting a queue first clear its content.
 	~Queue() {
 		this->clear();
 	}
-
-    /*
-     * @Lilith hier bitte nochmal genu gucken. Bin mir selber nciht 100%ig sicher,
-     * aber ich weiß nicht ob das so richtig funktioniert wenn du newTail einfach
-     * per gleich zu head und teil zuweist. Hatte das zwei mal mit std::make_shared
-     * gemacht, aber wie gesagt kann ich irren :)
-     */
 
 	// Enqueues a new element to the queue
 	void enqueue(const T &element) {
@@ -52,13 +45,13 @@ public:
 			this->tail = newTail;
 		}
 		else {
-            // If it's not empty connect the new head to the previous head.
+			// If it's not empty connect the new head to the previous head.
 			this->tail->setNextEntry(*newTail);
 			this->tail = newTail;
 		}
 	}
 
-    // Removes the first element from the queue and returns it.
+	// Removes the first element from the queue and returns it.
 	T dequeue() {
 		if (this->isEmpty) { throw std::runtime_error("unable to dequeue form empty queue"); }
 		T element = this->head->getElement();
@@ -69,24 +62,24 @@ public:
 		return element;
 	}
 
-    // Only looks at the head without removing it from the queue.
+	// Only looks at the head without removing it from the queue.
 	T peek() const {
 		if (this->isEmpty) { throw std::runtime_error("unable to peek form empty queue"); }
 		return this->head->getElement();
 	}
 
-    // Check if the queue has no elements stored.
+	// Check if the queue has no elements stored.
 	bool isEmpty() const {
 		return this->head.get() == nullptr;
 	}
 
-    // Removes all the elements from the queue.
+	// Removes all the elements from the queue.
 	void clear() {
-        if (this->isEmpty()) {
-            return;
-        }
-        this->head.reset();
-        this->tail.reset();
+		if (this->isEmpty()) {
+			return;
+		}
+		this->head.reset();
+		this->tail.reset();
 
 	}
 };

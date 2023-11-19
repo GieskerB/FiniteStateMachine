@@ -3,7 +3,7 @@
 #include "include/util/Queue.hpp"
 #include "include/util/Stack.hpp"
 #include "include/util/Tree.hpp"
-
+/*
 #include "include/machine/State.hpp"
 #include "include/machine/Transition.hpp"
 #include "include/machine/Machine.hpp"
@@ -18,3 +18,4 @@
 #include "src/machine/Machine.cpp"
 #include "src/machine/FiniteStateMachine.cpp"
 #include "src/machine/TuringMachine.cpp"
+*/

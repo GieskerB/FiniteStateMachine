@@ -4,6 +4,8 @@
 #include <cstddef>
 #include <string>
 
+#include <memory>
+
 class invalid_argument;
 struct forward_iterator_tag;
 
@@ -15,22 +17,24 @@ private:
 	 */
 	constexpr static float GROW_FACTOR = 1.5f;
 	constexpr static float SHRINK_AT = 0.25f;
-	constexpr static int DEFAULT_SIZE = 10;
+	constexpr static unsigned int DEFAULT_SIZE = 10;
 
 	/*
 	 * The initialSize defaults to 10 and is used if Array is cleared.
 	 * Then it will be set to its initialSize
 	 */
-	const int initialSize;
+	unsigned const int initialSize;
+
 	/*
 	 * Always keeping track of the true number of Elements in the Array and
 	 * the true size of it.
 	 */
-	int currentSize, maxSize;
+	unsigned int currentSize, maxSize;
 	/*
 	 * T** <=> T* elements[]: It's an array of pointer to Objects of type T
 	 */
-	T **elements;
+
+	std::shared_ptr<T> *elements;
 
 	void grow() {
 		this->resizeElements(this->maxSize * DynArray::GROW_FACTOR);
@@ -39,8 +43,7 @@ private:
 		this->resizeElements(this->currentSize);
 	}
 	void resizeElements(const int newSize) {
-		//	T *newElements[newSize];
-		T **newElements = new T*[newSize];
+		std::shared_ptr<T> *newElements = new std::shared_ptr<T>[newSize];
 		for (int i = 0; i < this->currentSize; i++) {
 			newElements[i] = this->elements[i];
 		}
@@ -65,18 +68,14 @@ public:
 	 * Creating a new empty DynArray
 	 */
 	DynArray() :
-			DynArray(DEFAULT_SIZE) {
-	}
+		DynArray(DEFAULT_SIZE) {}
 	/*
 	 * Creating a new empty DynArray with set size
 	 */
 	DynArray(int preDefinedSize) :
-			initialSize(preDefinedSize), currentSize(0), maxSize(preDefinedSize) {
-		this->elements = new T*[this->maxSize];
+		initialSize(preDefinedSize), currentSize(0), maxSize(preDefinedSize) {
+		this->elements = new std::shared_ptr<T>[preDefinedSize];
 	}
-
-   // DynArray<T>(const DynArray<T> &dynArray ) = delete;
-   // DynArray<T> &operator= (const DynArray<T> &dynArray) = delete;
 
 	/*
 	 * Deleting the DynArray completely
@@ -89,9 +88,9 @@ public:
 	class Iterator {
 		using iterator_category = std::forward_iterator_tag;
 		using difference_type = std::ptrdiff_t;
-		using value_type = T*;
-		using pointer = value_type*;
-		using reference = value_type&;
+		using value_type = T;
+		using pointer = value_type *;
+		using reference = value_type &;
 
 	private:
 
@@ -99,8 +98,7 @@ public:
 
 	public:
 		Iterator(pointer ptr) :
-				m_ptr(ptr) {
-		}
+			m_ptr(ptr) {}
 
 		reference operator*() const {
 			return *m_ptr;
@@ -110,7 +108,7 @@ public:
 		}
 
 		// Prefix increment
-		Iterator& operator++() {
+		Iterator &operator++() {
 			m_ptr++;
 			return *this;
 		}
@@ -131,93 +129,80 @@ public:
 
 	};
 
-	/*
-	 * Iterator specific methods:
-	 */
+
 	DynArray<T>::Iterator begin() {
-		return DynArray<T>::Iterator(&this->elements[0]);
+		return DynArray<T>::Iterator(this->elements[0]);
 	}
 	DynArray<T>::Iterator end() {
 		// Out of bounce if necessary here
-		return DynArray<T>::Iterator(&this->elements[this->currentSize]);
+		// return DynArray<T>::Iterator(this->elements[this->currentSize - 1].get());
+		// return DynArray<T>::Iterator(this->elements + (this->currentSize * sizeof(std::shared_ptr<T>)));
+		return DynArray<T>::Iterator(this->elements + (this->currentSize * sizeof(std::shared_ptr<T>)));
 	}
+
 
 	/*
 	 * Simple way to get specific Elements from the DynArray (readOnly)
 	 */
-	T* getFirst() const {
+	T getFirst() const {
 		return this->get(0);
 	}
-	T* getLast() const {
+	T getLast() const {
 		return this->get(this->currentSize - 1);
 	}
-	T* get(const int index) const {
+	T get(const int index) const {
 		if (index < 0 or index >= this->currentSize) {
 			throw std::invalid_argument(
-					std::to_string(index) + " is out of bounce of size 0 to "
-							+ std::to_string(this->currentSize));
+				std::to_string(index) + "  get is out of bounce of size 0 to "
+				+ std::to_string(this->currentSize));
 		}
-		return this->elements[index];
+		return *this->elements[index];
 	}
 
 	/*
 	 * Setting / Overwriting an element in the DynArray
 	 */
-	void setFirst(T *newElement) {
+
+	void setFirst(const T &newElement) {
 		this->set(newElement, 0);
 	}
-	void setFirst(const T &newElement) {
-		this->setFirst(new T(newElement));
-	}
-	void setLast(T *newElement) {
-		this->set(newElement, std::max(this->currentSize - 1, 0));
-	}
+
 	void setLast(const T &newElement) {
-		this->setLast(new T(newElement));
-	}
-	void set(T *newElement, const int index) {
-		if (index < 0 or index >= this->currentSize) {
-			throw std::invalid_argument(
-					std::to_string(index) + " is out of bounce of size 0 to "
-							+ std::to_string(this->currentSize));
-		}
-		this->elements[index] = newElement;
+		this->set(newElement, this->currentSize - 1);
 	}
 	void set(const T &newElement, const int index) {
-		this->set(new T(newElement), index);
+		if (index < 0 or index >= this->currentSize) {
+			throw std::invalid_argument(
+				std::to_string(index) + " set is out of bounce of size 0 to "
+				+ std::to_string(this->currentSize));
+		}
+		this->elements[index] = std::make_shared<T>(newElement);
 	}
 
 	/*
 	 * Adding a new element to the DynArray at a predefined place
 	 */
 
-	void addFirst(T *newElement) {
+	void addFirst(const T &newElement) {
 		this->add(newElement, 0);
 	}
-	void addFirst(const T &newElement) {
-		this->addFirst(new T(newElement));
-	}
-	void addLast(T *newElement) {
+
+	void addLast(const T &newElement) {
 		this->add(newElement, this->currentSize);
 	}
-	void addLast(const T &newElement) {
-		this->addLast(new T(newElement));
-	}
-	void add(T *newElement, const int index) {
+
+	void add(const T &newElement, const int index) {
 		if (index < 0 or index > this->currentSize) {
 			throw std::invalid_argument(
-					std::to_string(index) + " is out of bounce of size 0 to "
-							+ std::to_string(this->currentSize));
+				std::to_string(index) + " is out of bounce of size 0 to "
+				+ std::to_string(this->currentSize));
 		}
 		if (this->currentSize + 1 > this->maxSize) {
 			this->grow();
 		}
 		this->shiftRight(index);
-		this->elements[index] = newElement;
+		this->elements[index] = std::make_shared<T>(newElement);
 		this->currentSize++;
-	}
-	void add(const T &newElement, const int index) {
-		this->add(new T(newElement), index);
 	}
 	/*
 	 * Deleting an Element from the DynArray
@@ -231,15 +216,15 @@ public:
 	void remove(const int index) {
 		if (index < 0 or index > this->currentSize) {
 			throw std::invalid_argument(
-					std::to_string(index) + " is out of bounce of size 0 to "
-							+ std::to_string(this->currentSize));
+				std::to_string(index) + " is out of bounce of size 0 to "
+				+ std::to_string(this->currentSize));
 		}
-		delete this->elements[index];
-		this->elements[index] = nullptr;
 		this->shiftLeft(index);
-		if ((--this->currentSize) < this->maxSize * DynArray::SHRINK_AT) {
+		if (this->currentSize - 1 < this->maxSize * DynArray::SHRINK_AT) {
+			std::cout << "i was here";
 			this->shrink();
 		}
+		currentSize--;
 	}
 
 	/*
@@ -253,12 +238,10 @@ public:
 	 * Deletes the content of the DynArray completely
 	 */
 	void clear() {
-		for (int i = 0; i < this->currentSize; i++) {
-			delete this->elements[i];
-		}
+		delete[] this->elements;
+		this->elements = new std::shared_ptr<T>[this->initialSize];
 		this->currentSize = 0;
 		this->maxSize = this->initialSize;
-		this->elements[this->maxSize] = { };
 	}
 	/*
 	 * Returns the current number of elements
@@ -278,6 +261,24 @@ public:
 			}
 		}
 		return -1;
+	}
+
+	std::string toString() {
+		int size = this->size();
+
+		std::string outp = "{";
+
+		for (int i = 0; i < size - 1; i++) {
+			outp += std::to_string(this->get(i)) + ", ";
+		}
+		if (this->isEmpty()) {
+			outp += "}";
+		}
+		else {
+			outp += std::to_string(this->get(size - 1)) + "}";
+		}
+
+		return outp;
 	}
 
 };
