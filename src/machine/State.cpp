@@ -1,70 +1,72 @@
 //#pragma once
 
-#include <memory>
-#include <cstdlib>
-#include <ctime>
 #include "../../include/machine/State.hpp"
 
-State::State(std::string name, bool final, bool initial) :
-		name(name), initial(initial), final(final) {
 
+State::State(const std::string&  name, bool initial, bool final) :
+        name{name}, initial{initial}, final{final} {
+    std::cout << this->toString() << "is alive now\n";
 }
 
 State::~State() {
-
+    std::cout << this->toString() << "wird zerstört" << std::endl;
 }
 
-bool State::operator== (const State& other) const {
-	return this->name == other.name;
-}
-
-const std::string& State::getName() const {
-	return this->name;
+std::string State::getName() const {
+    return this->name;
 }
 
 bool State::isInitial() const {
-	return this->initial;
+    return this->initial;
 }
 
 bool State::isFinal() const {
-	return this->final;
+    return this->final;
 }
 
-void State::addTransition(Transition *transition) {
-	this->transitions.addLast(transition);
+void State::addTransition(const Transition& transition) {
+    this->transitions.addLast(transition);
 }
 
-bool State::hasFollowState(char letter, char flags) {
-	return this->getFollowState(letter, flags) != nullptr;
+bool State::hasFollowState(char letter, char flags) const {
+   // return this->getFollowState(letter, flags) != nullptr;
+   return false;
 }
 
-State* State::getFollowState(char letter, char flag = '\0') {
-	for (int i = 0; i < this->transitions.size(); i++) {
-		if (this->transitions.get(i)->isValid(letter, flag)) {
-			return this->transitions.get(i)->getFollowState();
-		}
-	}
-	return nullptr;
+const State& State::getFollowState(char letter, char flag = '\0') const {
+    for (int i = 0; i < this->transitions.size(); i++) {
+        if (this->transitions.get(i).isValid(letter, flag)) {
+            return this->transitions.get(i).getFollowState();
+        }
+    }
 }
 
-DynArray<State>& State::getFollowStates(char letter, char flag = '\0') {
-    std::unique_ptr<DynArray<State>> kartoffel = std::make_unique<DynArray<State>>();
-    // MEMORY LEAK
-	DynArray<State> *outp = new DynArray<State>();
-	for (int i = 0; i < this->transitions.size(); i++) {
-		if (this->transitions.get(i)->isValid(letter, flag)) {
-			outp->addLast(this->transitions.get(i)->getFollowState());
-		}
-	}
-	return *outp;
+const State& State::getRandomState() const {
+    int randIndex = std::rand() % this->transitions.size();
+    return this->transitions.get(randIndex).getFollowState();
 }
 
-State* State::getRandomState() {
-	int randIndex = std::rand() % this->transitions.size();
-	return this->transitions.get(randIndex)->getFollowState();
+DynArray<State> State::getFollowStates(char letter, char flag = '\0') const{
+    DynArray<State> outp = DynArray<State>();
+    for (int i = 0; i < this->transitions.size(); i++) {
+        if (this->transitions.get(i).isValid(letter, flag)) {
+            outp.addLast(this->transitions.get(i).getFollowState());
+        }
+    }
+    return outp;
 }
+
 
 std::string State::toString() {
-	return this->name + " " + (this->initial ? "is Init" : "notInit") + " "
-			+ (this->final ? "is Fin" : "notFin");
+    std::string internalValues = this->name + ": ";
+    internalValues = (this->initial ? "is Init" : "notInit");
+    internalValues += " ";
+    internalValues += (this->final ? "is Fin" : "notFin");
+    internalValues += " Number of Transitions: ";
+    internalValues += std::to_string(this->transitions.size());
+
+    std::string output = "State:[" + internalValues + "]";
+
+
+    return output;
 }

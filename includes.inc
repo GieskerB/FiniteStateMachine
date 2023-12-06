@@ -2,7 +2,6 @@
 #include "include/util/Entry.hpp"
 #include "include/util/Queue.hpp"
 #include "include/util/Stack.hpp"
-#include "include/util/Tree.hpp"
 /*
 #include "include/machine/State.hpp"
 #include "include/machine/Transition.hpp"

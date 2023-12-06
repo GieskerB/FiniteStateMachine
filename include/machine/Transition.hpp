@@ -1,42 +1,58 @@
 #pragma once
 
 #include "State.hpp"
+#include <array>
+#include <iostream>
 
-// Pre Declaration
-class State;
+#define DEF_FLAG '\0'
+#define NUM_FLAGS 2
 
 /*
- * This is the abstract Base class for all the different Transitions in the various Automatons / Machines
+ *  Strong and weak ownership: Transition does not "own" the state it points to. This is accomplished by using a
+ *  reference to the state instead of a member variable or pointer.
  */
+
+class State;
+
 class Transition {
+
+private:
+
+    static constexpr int NUM = 2;
 
 protected:
 
-	// Target of the Transition
-	State *state;
+    // Reference to the "target" of the transitions
+    const State &state;
 
-	// This is the letter that will be checked / writing when using this Transition
-	char letter;
+    // This is the letter that will be checked / writing when using this Transition
+    char letter;
 
-	// Different Flags maybe useful for different Transitions when needing extra information
-	char flag1, flag2, flag3;
+    // Different Flags useful for different type of machines. Necessary for storing extra information.
+    std::array<char, NUM_FLAGS> flags;
 
 public:
 
-	/*
-	 * simple linear Transition Constructor.
-	 */
-	Transition(char letter, State *state, char flag1, char flag2, char flag3);
+    // Constructors:
+    Transition() = delete;
 
-	~Transition();
+    Transition(char letter, const State &state, char flag0 = DEF_FLAG, char flag1 = DEF_FLAG);
 
-	/*
-	 * Simple getter Methods
-	 */
-	State* getFollowState() const;
-	char getLetter() const;
+    // Destructors:
+    ~Transition();
 
-	// Abstract / virtual Method need to be implanted separately to make it fit for each Automaton / Machine
-	bool isValid(char letter, char flag);
+
+    // Getter Methods
+    const State &getFollowState() const;
+
+    char getLetter() const;
+
+    std::array<char, NUM_FLAGS> getFlags() const;
+
+    // Checks if latter (and flag) are the same
+    bool isValid(char letter, char flag = DEF_FLAG);
+
+    // toString Method
+    std::string toString();
 
 };

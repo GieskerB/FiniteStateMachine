@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <cstddef>
 #include <string>
+#include <vector>
 
 #include <memory>
 
@@ -23,18 +24,18 @@ private:
 	 * The initialSize defaults to 10 and is used if Array is cleared.
 	 * Then it will be set to its initialSize
 	 */
-	unsigned const int initialSize;
+	unsigned const int initialSize{};
 
 	/*
 	 * Always keeping track of the true number of Elements in the Array and
 	 * the true size of it.
 	 */
-	unsigned int currentSize, maxSize;
+	unsigned int currentSize{}, maxSize{};
 	/*
-	 * T** <=> T* elements[]: It's an array of pointer to Objects of type T
+	 * T* <=> T elements[]: It's an array of pointer to Objects of type T
 	 */
 
-	std::shared_ptr<T> *elements;
+	T *elements;
 
 	void grow() {
 		this->resizeElements(this->maxSize * DynArray::GROW_FACTOR);
@@ -43,9 +44,9 @@ private:
 		this->resizeElements(this->currentSize);
 	}
 	void resizeElements(const int newSize) {
-		std::shared_ptr<T> *newElements = new std::shared_ptr<T>[newSize];
+		T newElements[newSize];
 		for (int i = 0; i < this->currentSize; i++) {
-			newElements[i] = this->elements[i];
+			newElements[i] = std::move(this->elements[i]);
 		}
 		delete[] this->elements;
 		this->maxSize = newSize;
@@ -53,12 +54,12 @@ private:
 	}
 	void shiftRight(const int from) {
 		for (int i = this->currentSize - 1; i >= from; i--) {
-			this->elements[i + 1] = this->elements[i];
+			this->elements[i + 1] = std::move(this->elements[i]);
 		}
 	}
 	void shiftLeft(const int from) {
 		for (int i = from; i < this->currentSize; i++) {
-			this->elements[i] = this->elements[i + 1];
+			this->elements[i] = std::move(this->elements[i]);
 		}
 	}
 
@@ -68,13 +69,13 @@ public:
 	 * Creating a new empty DynArray
 	 */
 	DynArray() :
-		DynArray(DEFAULT_SIZE) {}
+		DynArray{DEFAULT_SIZE} {}
 	/*
 	 * Creating a new empty DynArray with set size
 	 */
 	DynArray(int preDefinedSize) :
-		initialSize(preDefinedSize), currentSize(0), maxSize(preDefinedSize) {
-		this->elements = new std::shared_ptr<T>[preDefinedSize];
+		initialSize{static_cast<unsigned int>(preDefinedSize)}, currentSize{0}, maxSize{static_cast<unsigned int>(preDefinedSize)} {
+		this->elements[preDefinedSize];
 	}
 
 	/*
@@ -90,7 +91,7 @@ public:
 		using difference_type = std::ptrdiff_t;
 		using value_type = T;
 		using pointer = value_type*;
-		using reference = value_type &;
+		using reference = value_type&;
 
 	private:
 
@@ -131,13 +132,13 @@ public:
 
 
 	DynArray<T>::Iterator begin() {
-		return DynArray<T>::Iterator(this->elements[0]);
+		return DynArray<T>::Iterator(&this->elements[0]);
 	}
 	DynArray<T>::Iterator end() {
 		// Out of bounce if necessary here
 		// return DynArray<T>::Iterator(this->elements[this->currentSize - 1].get());
 		// return DynArray<T>::Iterator(this->elements + (this->currentSize * sizeof(std::shared_ptr<T>)));
-		return DynArray<T>::Iterator(this->elements + (this->currentSize * sizeof(std::shared_ptr<T>)));
+		return DynArray<T>::Iterator(&this->elements[0]+ (this->currentSize * sizeof(T)));
 	}
 
 
@@ -201,7 +202,7 @@ public:
 			this->grow();
 		}
 		this->shiftRight(index);
-		this->elements[index] = std::make_shared<T>(newElement);
+		this->elements[index] = std::move(newElement);
 		this->currentSize++;
 	}
 	/*
@@ -239,7 +240,7 @@ public:
 	 */
 	void clear() {
 		delete[] this->elements;
-		this->elements = new std::shared_ptr<T>[this->initialSize];
+		this->elements[this->initialSize];
 		this->currentSize = 0;
 		this->maxSize = this->initialSize;
 	}

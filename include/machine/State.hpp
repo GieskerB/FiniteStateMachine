@@ -2,56 +2,56 @@
 
 #include "Transition.hpp"
 #include "../util/DynArray.hpp"
-
 #include <iostream>
 
-// Pre Declaration
+/*
+ *  Strong and weak ownership: State "owns" all the transition starting from the state itself.
+ */
+
 class Transition;
 
 class State {
 
 private:
 
-	// Name like a identifier only for User
-	const std::string name;
-	// Frags for each State
-	const bool initial, final;
-	// Pointer because of inheritance
-	DynArray<Transition> transitions;
+    // Non-Terminal Symbole. Name is the identifier of a state. Primary used for the user.
+    const std::string name;
+
+    // Information about the State
+    const bool initial, final;
+
+    // Stores the references to all the transitions going from THIS state to another.
+    DynArray<Transition> transitions;
 
 public:
 
-	State() :
-			name(""), initial(false), final(false), transitions() {
+    //Constructors:
+    State() = delete;
 
-	}
+    State(const std::string &name, bool final = false, bool initial = false);
 
-	// Simple constructor default final and initial being false
-	State(std::string name, bool final = false, bool initial = false);
-	// Deconstructor
-	~State();
+    // Destructor:
+    ~State();
 
-	bool operator==(const State&)const;
+    // Getter Methods
+    std::string getName() const;
 
-	/*
-	 * Simple Getter Methods
-	 */
-	const std::string& getName() const;
-	State* getFollowState(char letter, char flags);
-	DynArray<State>& getFollowStates(char letter, char flag);
+    bool hasFollowState(char letter, char flags) const;
 
-	State* getRandomState();
+    const State &getFollowState(char letter, char flags) const;
 
-	/*
-	 * Simple Check Methods
-	 */
-	bool isInitial() const;
-	bool isFinal() const;
-	bool hasFollowState(char letter, char flags);
+    const State &getRandomState() const;
 
-	// Adding a new Transitions to the State without adding the same one twice
-	void addTransition(Transition *transition);
+    DynArray<State> getFollowStates(char letter, char flag) const;
 
-	std::string toString();
+    bool isInitial() const;
+
+    bool isFinal() const;
+
+    // Adding a new Transitions to the State without adding the same one twice
+    void addTransition(const Transition &transition);
+
+    // toString Method
+    std::string toString();
 
 };

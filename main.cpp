@@ -1,16 +1,10 @@
-#include <io.h>
-#include <cstdio>
-#include <cstdlib>
-#include <ctime>
+
 #include <iostream>
-#include <stdexcept>
-#include <string>
-#include <memory>
 
-#include "includes.inc"
+//#include "includes.inc"
 
-#include "include/machine/FiniteStateMachine.hpp"
-#include "include/machine/TuringMachine.hpp"
+// #include "include/machine/FiniteStateMachine.hpp"
+// #include "include/machine/TuringMachine.hpp"
 /*
 Machine *initMachine(const std::string &INPUT_FILE_NAME) {
 	int nameIndex = INPUT_FILE_NAME.length() - 1;
@@ -57,25 +51,28 @@ std::string getCurrentDir() {
 */
 
 
+#include "include/util/DynArrayCopy.hpp"
 int main() {
 
-	DynArray<int> dynArray;
+	DynArray<int> dynArray{};
 
 	dynArray.addLast(1);
 	dynArray.addLast(2);
 	dynArray.addLast(3);
-	dynArray.addLast(4);
+    dynArray.addLast(4);
 	dynArray.addLast(5);
+
+    std::cout << dynArray.size() << '\n';
 
 	for (int i : dynArray) {
 		std::cout << i << " ";
 	}
-	std::cout << std::endl;
+	std::cout << '\n'<< "Here we go again!"<< '\n';
 
 	for (auto it = dynArray.begin(); it != dynArray.end(); it++) {
 		std::cout << *it << " ";
 	}
-	std::cout << std::endl;
+	std::cout << '\n';
 
 	/*
 	std::srand((unsigned)std::time(nullptr));
