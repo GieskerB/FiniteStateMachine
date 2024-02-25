@@ -8,7 +8,7 @@
 #include <stdexcept>
 #include <string>
 
-#include "../../include/util/DynArray.hpp"
+#include "../../include/util/Array.hpp"
 
 DynArray<std::string> Machine::extractNames(const std::string &line) {
 	DynArray<std::string> states;

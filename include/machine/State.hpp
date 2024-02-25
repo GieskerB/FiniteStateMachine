@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Transition.hpp"
-#include "../util/DynArray.hpp"
+#include "../util/Array.hpp"
 #include <iostream>
 
 /*
@@ -15,38 +15,55 @@ class State {
 private:
 
     // Non-Terminal Symbole. Name is the identifier of a state. Primary used for the user.
-    const std::string name;
+    std::string name;
 
     // Information about the State
-    const bool initial, final;
+    bool initial, final, dummy;
 
     // Stores the references to all the transitions going from THIS state to another.
-    DynArray<Transition> transitions;
+    Array<Transition> transitions;
+
+    // check if State is a dummy. When true throw exception!
+    void check_dummy() const;
 
 public:
 
-    //Constructors:
-    State() = delete;
 
-    State(const std::string &name, bool final = false, bool initial = false);
+    //Standard constructors:
+    State();
+
+    // Explicit Constructor:
+    explicit State(std::string , bool final = false, bool initial = false);
+
+    // Copy constructor:
+    State(const State& );
+
+    // Move constructor:
+    State( State&& );
 
     // Destructor:
     ~State();
 
+    // Copy Assignment:
+    State& operator=(const State& );
+
+    // Move Assignment:
+    State& operator=(State&& ) noexcept ;
+
     // Getter Methods
-    std::string getName() const;
+    [[nodiscard]] const std::string & getName() const;
 
-    bool hasFollowState(char letter, char flags) const;
+    [[nodiscard]] bool hasFollowState(char letter, char flags) const;
 
-    const State &getFollowState(char letter, char flags) const;
+    [[nodiscard]] const State &getFollowState(char letter, char flags) const;
 
-    const State &getRandomState() const;
+    [[nodiscard]] const State &getRandomState() const;
 
-    DynArray<State> getFollowStates(char letter, char flag) const;
+    [[nodiscard]] Array<State> getFollowStates(char letter, char flag) const;
 
-    bool isInitial() const;
+    [[nodiscard]] bool isInitial() const;
 
-    bool isFinal() const;
+    [[nodiscard]] bool isFinal() const;
 
     // Adding a new Transitions to the State without adding the same one twice
     void addTransition(const Transition &transition);

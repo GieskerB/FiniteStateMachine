@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "../util/DynArray.hpp"
+#include "../util/Array.hpp"
 #include "State.hpp"
 
 class Machine {

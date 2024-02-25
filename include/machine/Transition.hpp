@@ -23,24 +23,43 @@ private:
 protected:
 
     // Reference to the "target" of the transitions
-    const State &state;
+    State *state;
 
     // This is the letter that will be checked / writing when using this Transition
     char letter;
 
+    bool dummy;
+
     // Different Flags useful for different type of machines. Necessary for storing extra information.
     std::array<char, NUM_FLAGS> flags;
 
+    void check_dummy() const;
+
 public:
 
-    // Constructors:
-    Transition() = delete;
+    //Standard constructors:
+    Transition();
 
-    Transition(char letter, const State &state, char flag0 = DEF_FLAG, char flag1 = DEF_FLAG);
+    // Explicit Constructor:
+    Transition(char letter, State &state, char flag0 = DEF_FLAG, char flag1 = DEF_FLAG);
 
-    // Destructors:
+    // Copy constructor:
+    Transition(const Transition& );
+
+    // Move constructor:
+    Transition( Transition&& ) noexcept;
+
+    // Destructor:
     ~Transition();
 
+    // Copy Assignment:
+    Transition& operator=(const Transition& );
+
+    // Move Assignment:
+    Transition& operator=(Transition&& ) noexcept ;
+
+
+    static const Transition DUMMY;
 
     // Getter Methods
     const State &getFollowState() const;

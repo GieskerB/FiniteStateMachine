@@ -1,4 +1,4 @@
-#include "include/util/DynArray.hpp"
+#include "include/util/Array.hpp"
 #include "include/util/Entry.hpp"
 #include "include/util/Queue.hpp"
 #include "include/util/Stack.hpp"
