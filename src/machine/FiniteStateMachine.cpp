@@ -1,21 +1,41 @@
 #include "../../include/machine/FiniteStateMachine.hpp"
-
-#include <iostream>
 #include <stdexcept>
-#include <string>
+#include <algorithm>
+
+std::istream & FiniteStateMachine::operator>>(std::istream &in_stream) {
+
+    std::string line;
+    std::getline(in_stream, line);
+
+   line.erase(std::remove_if(line.begin(), line.end(), isspace), line.end());
+
+    int line_counter = 0;
+    while(line != "}") {
+        if(line.empty() or (line.size() >= 2 and line[0] == '/' and line[1] == '/')) {
+            continue;
+        }
+        switch (line_counter) {
+            case 0:
+                // Read all non-terminal symbols
+            break;
+        }
+    }
+
+    return in_stream;
+}
 
 void FiniteStateMachine::readFromFile(const std::string &fileName) {
-	DynArray<std::string> inputLines = getInput(fileName);
-
-	// Stores name of all, initial and final states
+	std::vector<std::string> inputLines = getInput(fileName);
+/*
+	// Stores name of all, initial and final m_states
 	// all States
-	DynArray<std::string> allStates = Machine::extractNames(
+	std::vector<std::string> allStates = Machine::extractNames(
 			*inputLines.getFirst());
 	// final States
-	DynArray<std::string> initialStates = Machine::extractNames(
+	std::vector<std::string> initialStates = Machine::extractNames(
 			*inputLines.get(1));
 	// initial States
-	DynArray<std::string> finalStates = Machine::extractNames(
+	std::vector<std::string> finalStates = Machine::extractNames(
 			*inputLines.get(2));
 
 	// Stops the program if user made wrong Input
@@ -24,7 +44,7 @@ void FiniteStateMachine::readFromFile(const std::string &fileName) {
 	// get all alphabet characters
 	this->setupAlphabet(*inputLines.get(3));
 
-	//Initializing all the states
+	//Initializing all the m_states
 	const int stateNum = allStates.size();
 	for (int i = 0; i < stateNum; i++) {
 		const std::string name = *allStates.get(i);
@@ -33,18 +53,18 @@ void FiniteStateMachine::readFromFile(const std::string &fileName) {
 						*initialStates.getFirst() == name));
 	}
 	this->setupTransitions(inputLines);
-
+*/
 }
 
 void FiniteStateMachine::setupTransitions(
-		const DynArray<std::string> &inputLines) {
+		const std::vector<std::string> &inputLines) {
 	// All transitions are in line 5 to length -2
 	const int LEN = inputLines.size();
-	if (*inputLines.get(4) != "{" or *inputLines.get(LEN - 1) != "}") {
+	if (inputLines[4] != "{" or inputLines[LEN - 1] != "}") {
 		throw std::invalid_argument("Transitions are not surrounded in {}");
 	}
 	for (int i = 5; i < LEN - 1; i++) {
-		const std::string TRANSITION = *inputLines.get(i);
+		const std::string TRANSITION = inputLines[i];
 		const int TRANS_LEN = TRANSITION.length();
 		// Split the Transition into its 3 main components:
 		int lastJ = 0;
@@ -82,13 +102,15 @@ FiniteStateMachine::FiniteStateMachine(const std::string &fileName) :
 FiniteStateMachine::~FiniteStateMachine() = default;
 
 void FiniteStateMachine::addState(const State &newState) {
-	if (this->states.indexOf(newState) == -1) {
-		this->states.addLast(newState);
+/*
+	if (this->m_states.indexOf(newState) == -1) {
+		this->m_states.addLast(newState);
 	} else {
 		std::cout << "You can not add the same state twice" << std::endl;
 	}
+ */
 	if (newState.isInitial() && !this->hasInitalState) {
-		this->currentState = this->states.getLast();
+		this->currentState = &this->m_states[m_states.size()-1];
 		this->hasInitalState = true;
 	} else if (newState.isInitial() && !this->hasInitalState) {
 		throw std::runtime_error(

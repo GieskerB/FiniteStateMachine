@@ -9,16 +9,16 @@ The program expects an input file named "Input," which can be either a .tm file 
 ### Common Format for Both TM and FSM
 
 - **Nonterminals (Line 1):**
-    - List of nonterminal symbols separated by commas (e.g., A, B, C, D).
+    - List of nonterminal symbols separated by commas (e.g. A, B, C, D).
 
 - **Start State (Line 2):**
     - Single nonterminal symbol representing the start state.
 
 - **Accepting States (Line 3):**
-    - List of nonterminal symbols representing the accepting states.
+    - List of nonterminal symbols representing the accepting m_states.
 
 - **Terminals (Line 4):**
-    - List of terminal symbols separated by commas.
+    - List of terminal symbols separated by commas (e.g. a, b, c, d).
 
 ### Turing Machine (TM) Specific Format
 

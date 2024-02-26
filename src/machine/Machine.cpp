@@ -4,14 +4,13 @@
 #include <cctype>
 #include <cstdint>
 #include <fstream>
-#include <iterator>
 #include <stdexcept>
-#include <string>
 
-#include "../../include/util/Array.hpp"
 
-DynArray<std::string> Machine::extractNames(const std::string &line) {
-	DynArray<std::string> states;
+
+
+std::vector<std::string> Machine::extractNames(const std::string &line) {
+    std::vector<std::string> states;
 	std::string name;
 
 	const uint32_t len = line.length();
@@ -22,18 +21,18 @@ DynArray<std::string> Machine::extractNames(const std::string &line) {
 		if (line.at(i) == ',') {
 			name = line.substr(lastComma + 1, i - lastComma - 1);
 			lastComma = i;
-			states.addLast(name);
+			states.push_back(name);
 		}
 	}
 	name = line.substr(lastComma + 1, len - lastComma - 1);
-	states.addLast(name);
+	states.push_back(name);
 	return states;
 }
 
-void Machine::checkForMistake(const DynArray<std::string> &initialStates,
-		const DynArray<std::string> &allStates) {
+void Machine::checkForMistake(const std::vector<std::string> &initialStates,
+		const std::vector<std::string> &allStates) {
 	// Stops the program if user made wrong Input
-	if (initialStates.size() != 1) {
+/*	if (initialStates.size() != 1) {
 		throw std::invalid_argument(
 				"There must be exact one initial-state. currently there are "
 						+ std::to_string(initialStates.size()));
@@ -42,12 +41,13 @@ void Machine::checkForMistake(const DynArray<std::string> &initialStates,
 				"initial-state '" + *initialStates.getFirst()
 						+ "' must be a predefined state.");
 	}
+ */
 }
 
-DynArray<std::string> Machine::getInput(const std::string &fileName) {
+std::vector<std::string> Machine::getInput(const std::string &fileName) {
 	std::ifstream inputFile;
 	inputFile.open(fileName);
-	DynArray<std::string> inputLines;
+    std::vector<std::string> inputLines;
 	if (inputFile.is_open()) {
 		std::string line;
 		while (getline(inputFile, line)) {
@@ -61,7 +61,7 @@ DynArray<std::string> Machine::getInput(const std::string &fileName) {
 			line.erase(std::remove_if(line.begin(), line.end(), isspace),
 					line.end());
 
-			inputLines.addLast(line);
+			inputLines.push_back(line);
 		}
 		inputFile.close();
 	} else {
@@ -78,11 +78,11 @@ void Machine::setupAlphabet(const std::string &line) {
 	for (uint32_t i = 0; i < len; i++) {
 		if (line.at(i) == ',') {
 			character = line.at(i - 1);
-			alphabet.addLast(character);
+			alphabet.push_back(character);
 		}
 	}
 	character = line.at(len - 1);
-	alphabet.addLast(character);
+	alphabet.push_back(character);
 }
 
 Machine::Machine() :
@@ -91,3 +91,16 @@ Machine::Machine() :
 }
 
 Machine::~Machine() = default;
+
+void remove_spaces(std::string& str) {
+    str.erase(remove_if(str.begin(), str.end(), isspace), str.end());
+}
+
+std::vector<std::string> split_at_comma(std:: string& str) {
+    std::vector<std::string> splits{};
+    std::string::size_type pos = 0;
+    do{
+        splits.push_back( str.substr(pos, str.find(',', pos) - pos));
+    }while((pos = str.find(',', pos))++ != std::string::npos);
+    return splits;
+}

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Transition.hpp"
-#include "../util/Array.hpp"
 #include <iostream>
+#include <vector>
 
 /*
  *  Strong and weak ownership: State "owns" all the transition starting from the state itself.
@@ -21,13 +21,12 @@ private:
     bool initial, final, dummy;
 
     // Stores the references to all the transitions going from THIS state to another.
-    Array<Transition> transitions;
+    std::vector<Transition> transitions;
 
     // check if State is a dummy. When true throw exception!
     void check_dummy() const;
 
 public:
-
 
     //Standard constructors:
     State();
@@ -44,6 +43,8 @@ public:
     // Destructor:
     ~State();
 
+    static const State DUMMY;
+
     // Copy Assignment:
     State& operator=(const State& );
 
@@ -59,7 +60,7 @@ public:
 
     [[nodiscard]] const State &getRandomState() const;
 
-    [[nodiscard]] Array<State> getFollowStates(char letter, char flag) const;
+    [[nodiscard]] std::vector<State> getFollowStates(char letter, char flag) const;
 
     [[nodiscard]] bool isInitial() const;
 

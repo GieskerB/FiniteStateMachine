@@ -2,31 +2,30 @@
 
 #include <string>
 
-#include "../util/Array.hpp"
 #include "State.hpp"
 
 class Machine {
 
 protected:
 
-	DynArray<State> states;
-	DynArray<char> alphabet;
+	std::vector<State> m_states;
+    std::vector<char> alphabet;
 
-	// always one State from the states DynArray
+	// always one State from the m_states DynArray
 	State *currentState;
 
 	bool deterministic, hasInitalState;
 
-	static DynArray<std::string> extractNames(const std::string&);
+	static std::vector<std::string> extractNames(const std::string&);
 
-	static void checkForMistake(const DynArray<std::string>&,
-			const DynArray<std::string>&);
+	static void checkForMistake(const std::vector<std::string>&,
+			const std::vector<std::string>&);
 
-	static DynArray<std::string> getInput(const std::string&);
+	static std::vector<std::string> getInput(const std::string&);
 
 	void setupAlphabet(const std::string&);
 
-	virtual void readFromFile(const std::string&) = 0;
+    virtual std::istream& operator>>(std::istream& in_stream)= 0;
 
 public:
 
@@ -41,3 +40,8 @@ public:
 	virtual bool accept(const std::string&) = 0;
 
 };
+
+void remove_spaces(std::string& str);
+
+
+std::vector<std::string> split_at_comma(std:: string& str);

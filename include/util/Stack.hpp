@@ -9,22 +9,22 @@
    - Generics: This Stack class is template-based, meaning it can work with a wide range of data types, making it highly flexible for various applications.
 
    Basic Operations:
-   - 'push': Adds an element to the top of the stack.
-   - 'pop': Removes and returns the top element from the stack.
-   - 'isEmpty': Checks whether the stack is empty.
+   - 'push': Adds an m_element to the m_top of the stack.
+   - 'pop': Removes and returns the m_top m_element from the stack.
+   - 'is_empty': Checks whether the stack is empty.
    - 'clear': Removes all elements from the stack, effectively emptying the stack.
 
    How to Use:
-   - To employ this Stack, declare an instance with the desired data type (e.g., Stack<int> for integers) and perform 'push', 'pop', and 'isEmpty' operations as needed.
+   - To employ this Stack, declare an instance with the desired data type (e.g., Stack<int> for integers) and perform 'push', 'pop', and 'is_empty' operations as needed.
 */
 template<typename T>
 class Stack {
 private:
 
     // Usage of a shared pointer to make memory management easier.
-    // Top stores a pointer to the top most element of the stack.
+    // Top stores a pointer to the m_top most m_element of the stack.
     // is a null pointer by default
-    std::shared_ptr<Entry<T>> top;
+    std::shared_ptr<Entry<T>> m_top;
 
 public:
 
@@ -33,50 +33,48 @@ public:
 
     // When deleting a stack first clear its content.
     ~Stack() {
-        this->clear();
+        clear();
     }
 
-    // Pushes a new element to the stack.
+    // Pushes a new m_element to the stack.
     void push(const T &element) {
-        if (this->isEmpty()) {
-            Entry<T> newTopEntry(element);
-            this->top = std::make_shared<Entry<T>>(newTopEntry);
+        if (is_empty()) {
+            m_top = std::make_shared<Entry<T>>(element);
         } else {
-            // If it's not empty connect the new top element to the old one.
-            Entry<T> newTopEntry(element, *this->top);
-            this->top = std::make_shared<Entry<T>>(newTopEntry);
+            // If it's not empty connect the new m_top m_element to the old one.
+            m_top = std::make_shared<Entry<T>>(element, *m_top);
         }
     }
 
-    // Removes the top most element from the stack and returns it.
+    // Removes the m_top most m_element from the stack and returns it.
     T pop() {
-        if (this->isEmpty()) {
+        if (is_empty()) {
             // In case of illegal usage of pop throw an exception.
             throw std::runtime_error("unable to pop from empty stack");
         }
-        T element = this->top->getElement();
-        this->top = this->top->getNextEntry();
-        return element;
+        T temp_element = m_top->get_element();
+        m_top = std::move(m_top->get_next_entry());
+        return temp_element;
     }
 
-    // Only looks at the top most element without removing it from the stack.
+    // Only looks at the m_top most m_element without removing it from the stack.
     T peek() const {
-        if (this->isEmpty()) {
+        if (is_empty()) {
             throw std::runtime_error("unable to peak into empty stack");
         }
-        return this->top->getElement();
+        return m_top->get_element();
     }
 
     // Check if the stack has no elements stored.
-    bool isEmpty() const {
-        return this->top.get() == nullptr;
+    [[nodiscard]] bool is_empty() const {
+        return m_top.get() == nullptr;
     }
 
     // Removes all the elements from the stack.
     void clear() {
-        if (this->isEmpty()) {
+        if (is_empty()) {
             return;
         }
-        this->top.reset();
+        m_top.reset();
     }
 };

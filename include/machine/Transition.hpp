@@ -1,11 +1,9 @@
 #pragma once
 
 #include "State.hpp"
-#include <array>
 #include <iostream>
+#include <vector>
 
-#define DEF_FLAG '\0'
-#define NUM_FLAGS 2
 
 /*
  *  Strong and weak ownership: Transition does not "own" the state it points to. This is accomplished by using a
@@ -31,7 +29,7 @@ protected:
     bool dummy;
 
     // Different Flags useful for different type of machines. Necessary for storing extra information.
-    std::array<char, NUM_FLAGS> flags;
+    std::vector<char> flags;
 
     void check_dummy() const;
 
@@ -41,7 +39,7 @@ public:
     Transition();
 
     // Explicit Constructor:
-    Transition(char letter, State &state, char flag0 = DEF_FLAG, char flag1 = DEF_FLAG);
+    Transition(char letter, State &state, std::initializer_list<char> flags);
 
     // Copy constructor:
     Transition(const Transition& );
@@ -66,10 +64,10 @@ public:
 
     char getLetter() const;
 
-    std::array<char, NUM_FLAGS> getFlags() const;
+    std::vector<char> getFlags() const;
 
     // Checks if latter (and flag) are the same
-    bool isValid(char letter, char flag = DEF_FLAG);
+    bool isValid(char letter, char flag = 2) const;
 
     // toString Method
     std::string toString();

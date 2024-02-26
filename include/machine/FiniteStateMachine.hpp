@@ -6,13 +6,15 @@ class FiniteStateMachine: public Machine {
 
 private:
 
-	void readFromFile(const std::string&) override;
+	void readFromFile(const std::string&);
 
-	void setupTransitions(const DynArray<std::string>&);
+	void setupTransitions(const std::vector<std::string>&);
+
+    std::istream & operator>>(std::istream& in_stream) override;
 
 public:
 
-	FiniteStateMachine(const std::string&);
+	explicit FiniteStateMachine(const std::string&);
 
 	~FiniteStateMachine() override;
 

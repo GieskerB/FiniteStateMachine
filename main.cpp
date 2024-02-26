@@ -1,10 +1,8 @@
 
-#include <iostream>
-
 #include "includes.inc"
 
-int main() {
 
+int main() {
 
 
 	return 0;

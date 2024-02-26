@@ -9,11 +9,11 @@ class TuringMachine: public Machine {
 
 private:
 
-	void readFromFile(const std::string&) override;
+    std::istream & operator>>(std::istream& in_stream) override;
 
 public:
 
-	TuringMachine(const std::string&);
+	 TuringMachine();
 
 	~TuringMachine() override;
 

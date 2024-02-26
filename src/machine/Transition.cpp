@@ -1,6 +1,4 @@
-#include "../../include/machine/State.hpp"
 #include "../../include/machine/Transition.hpp"
-
 
 void Transition::check_dummy() const {
     if (this->dummy) throw std::runtime_error("Invalid use of dummy object.");
@@ -13,10 +11,9 @@ void Transition::check_dummy() const {
  */
 Transition::Transition() : state(nullptr), letter{'\0'}, dummy{true} {}
 
-Transition::Transition(char letter, State &state, char flag0, char flag1) :
-        state{&state}, dummy{false}, letter{letter} {
-    flags[0] = flag0;
-    flags[1] = flag1;
+Transition::Transition(char letter, State &state, std::initializer_list<char> flags) :
+        state{&state},  letter{letter}, dummy{false}, flags{flags}{
+
 }
 
 Transition::Transition(const Transition &other_transition) {
@@ -58,11 +55,11 @@ char Transition::getLetter() const {
     return this->letter;
 }
 
-std::array<char, NUM_FLAGS> Transition::getFlags() const {
+std::vector<char> Transition::getFlags() const {
     return this->flags;
 }
 
-bool Transition::isValid(char letter, char flag0) {
+bool Transition::isValid(char letter, char flag0) const {
     // flag0 is currently used by the TM als the second argument
     // to determine which Transition to pick.
     return letter == this->letter and flag0 == this->flags[0];

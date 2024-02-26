@@ -1,12 +1,11 @@
-//#pragma once
-
-#include <utility>
-
 #include "../../include/machine/State.hpp"
+#include <utility>
 
 /*
  * Private methods:
  */
+
+const State State::DUMMY{};
 
 
 void State::check_dummy() const {
@@ -90,6 +89,7 @@ const State &State::getFollowState(char letter, char flag = '\0') const {
             return this->transitions[i].getFollowState();
         }
     }
+    return State::DUMMY;
 }
 
 
@@ -98,11 +98,11 @@ const State &State::getRandomState() const {
     return this->transitions[randIndex].getFollowState();
 }
 
-Array<State> State::getFollowStates(char letter, char flag = '\0') const {
-    Array<State> outp{};
+std::vector<State> State::getFollowStates(char letter, char flag = '\0') const {
+    std::vector<State> outp{};
     for (int i = 0; i < this->transitions.size(); i++) {
         if (this->transitions[i].isValid(letter, flag)) {
-            outp.addLast(this->transitions[i].getFollowState());
+            outp.push_back(this->transitions[i].getFollowState());
         }
     }
     return outp;
@@ -113,7 +113,7 @@ Array<State> State::getFollowStates(char letter, char flag = '\0') const {
  */
 
 void State::addTransition(const Transition &transition) {
-    this->transitions.addLast(transition);
+    this->transitions.push_back(transition);
 }
 
 

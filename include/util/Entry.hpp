@@ -8,19 +8,19 @@ The Entry class is a generic container designed to manage elements in a linked l
 
 Key Features:
 - Generics: This Entry class is template-based, allowing it to store elements of various data types.
-- Linked List: It represents an element in a linked list and maintains a reference to the next Entry in the list.
+- Linked List: It represents an m_element in a linked list and maintains a reference to the next Entry in the list.
 
 Constructor Options:
 - The Entry class can be constructed with two variations:
-1. An Entry with only an element, where it stores the element.
-2. An Entry with both an element and a reference to the next Entry in line.
+1. An Entry with only an m_element, where it stores the m_element.
+2. An Entry with both an m_element and a reference to the next Entry in line.
 
 Access and Modification:
-- It provides methods to access and manipulate the element and the next Entry in the list.
-- 'getElement': Returns the element stored in the Entry.
-- 'hasNextEntry': Checks if there is a next Entry in the list.
-- 'getNextEntry': Retrieves the shared pointer to the next Entry.
-- 'setNextEntry': Sets the next Entry in the list.
+- It provides methods to access and manipulate the m_element and the next Entry in the list.
+- 'get_element': Returns the m_element stored in the Entry.
+- 'has_next_entry': Checks if there is a next Entry in the list.
+- 'get_next_entry': Retrieves the shared pointer to the next Entry.
+- 'set_next_entry': Sets the next Entry in the list.
 
 Usage:
 - The Entry class is used in the creation of linked data structures such as stack and queues.
@@ -31,11 +31,11 @@ class Entry {
 private:
 
     // Usage of shared pointers to make memory management easier.
-	// Element stores a pointer to the value that the data structure are managing.
-	const std::shared_ptr<T> element;
+	// m_element stores a pointer to the value that the data structure are managing.
+	const std::shared_ptr<T> m_element;
 
-	// nextEntry stores a pointer to the following entry in the data structure.
-	std::shared_ptr<Entry<T>> nextEntry;
+	// m_next_entry stores a pointer to the following entry in the data structure.
+	std::shared_ptr<Entry<T>> m_next_entry;
 
 public:
 
@@ -43,33 +43,33 @@ public:
 	Entry() = delete;
 
 	// Simple storing a value without the pointer to a next entry.
-	Entry(const T &element) :
-		element(std::make_shared<T>(element)) {}
-	// storing the element and pointer to the next entry.
-	Entry(const T &element, const Entry<T> &nextEntry) :
-		element(std::make_shared<T>(element)),
-		nextEntry(std::make_shared<Entry<T>>(nextEntry)) {}
+	explicit Entry(const T &element) :
+            m_element(std::make_shared<T>(element)) {}
+	// storing the m_element and pointer to the next entry.
+	Entry(const T &element, const Entry<T> &next_entry) :
+            m_element(std::make_shared<T>(element)),
+            m_next_entry(std::make_shared<Entry<T>>(next_entry)) {}
 
     // Default destructor, because no need for destruction of any pointers.
 	~Entry() = default;
 
-    // Returns the element store the user wants to be stored in the datastructures
-	T getElement() const {
-		return *this->element;
+    // Returns the m_element store the user wants to be stored in the datastructures
+	T get_element() const {
+		return *m_element;
 	}
 
     // Check if the current Entry points to a next one
-	bool hasNextEntry() const {
-		return this->nextEntry.get() != nullptr;
-	}
+	[[nodiscard]] bool has_next_entry() const{
+        return m_next_entry.get() != nullptr;
+    }
 
     // Returning the std::shared_pointer to the next entry
-	std::shared_ptr<Entry<T>> getNextEntry() const {
-		return this->nextEntry;
+	std::shared_ptr<Entry<T>> get_next_entry() const {
+		return m_next_entry;
 	}
 
     // Overwrites the next Entry with a new one.
-	void setNextEntry(const Entry<T> &newNextEntry) {
-		this->nextEntry = std::make_shared<Entry<T>>(newNextEntry);
+	void set_next_entry(const std::shared_ptr<Entry<T>> &next_entry) {
+        m_next_entry = next_entry;
 	}
 };
