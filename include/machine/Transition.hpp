@@ -14,10 +14,6 @@ class State;
 
 class Transition {
 
-private:
-
-    static constexpr int NUM = 2;
-
 protected:
 
     // Reference to the "target" of the transitions

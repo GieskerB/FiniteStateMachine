@@ -49,7 +49,7 @@ void TuringMachine::readFromFile(const std::string &fileName) {
 	const int stateNum = allStates.size();
 	for (int i = 0; i < stateNum; i++) {
 		const std::string name = *allStates.get(i);
-		this->addState(
+		this->add_state(
 				State(name, finalStates.indexOf(name) != -1,
 						*initialStates.getFirst() == name));
 	}
@@ -63,7 +63,7 @@ TuringMachine::TuringMachine() : Machine(){
 TuringMachine::~TuringMachine() = default;
 
 
-void TuringMachine::addState(const State &newState) {
+void TuringMachine::add_state(const State &newState) {
 /*
 	if (this->m_states.indexOf(newState) == -1) {
 		this->m_states.addLast(newState);
@@ -71,10 +71,10 @@ void TuringMachine::addState(const State &newState) {
 		std::cout << "You can not add the same state twice" << std::endl;
 	}
  */
-	if (newState.isInitial() && !this->hasInitalState) {
-		this->currentState = &this->m_states[m_states.size()-1];
-		this->hasInitalState = true;
-	} else if (newState.isInitial() && !this->hasInitalState) {
+	if (newState.is_initial() && !this->m_has_initial_state) {
+		this->p_current_state = &this->m_states[m_states.size() - 1];
+		this->m_has_initial_state = true;
+	} else if (newState.is_initial() && !this->m_has_initial_state) {
 		throw std::runtime_error(
 				"Turing-Machine only allows one initial State.");
 	}

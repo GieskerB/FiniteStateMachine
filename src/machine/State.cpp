@@ -63,11 +63,11 @@ State& State::operator=(State&& other_state)  noexcept {
 /*
  * getter
  */
-const std::string &State::getName() const {
+const std::string &State::get_name() const {
     return this->name;
 }
 
-bool State::isInitial() const {
+bool State::is_initial() const {
     return this->initial;
 }
 

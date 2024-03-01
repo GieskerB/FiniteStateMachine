@@ -78,15 +78,15 @@ void Machine::setupAlphabet(const std::string &line) {
 	for (uint32_t i = 0; i < len; i++) {
 		if (line.at(i) == ',') {
 			character = line.at(i - 1);
-			alphabet.push_back(character);
+			m_alphabet.push_back(character);
 		}
 	}
 	character = line.at(len - 1);
-	alphabet.push_back(character);
+	m_alphabet.push_back(character);
 }
 
 Machine::Machine() :
-		currentState(nullptr), deterministic(false), hasInitalState(false) {
+        p_current_state(nullptr), deterministic(false), m_has_initial_state(false) {
 
 }
 
@@ -96,11 +96,18 @@ void remove_spaces(std::string& str) {
     str.erase(remove_if(str.begin(), str.end(), isspace), str.end());
 }
 
-std::vector<std::string> split_at_comma(std:: string& str) {
-    std::vector<std::string> splits{};
-    std::string::size_type pos = 0;
-    do{
-        splits.push_back( str.substr(pos, str.find(',', pos) - pos));
-    }while((pos = str.find(',', pos))++ != std::string::npos);
-    return splits;
+std::set<std::string> separate_by_comma(const std::string & line) {
+    std::set<std::string> sections{};
+    const size_t size = line.size();
+    int left_index{0}, right_index{0};
+    while (right_index < size) {
+        if(line[right_index] == ',') {
+            sections.insert(line.substr(left_index, right_index - left_index));
+            left_index = right_index+1;
+        }
+        ++right_index;
+    }
+    sections.insert(line.substr(left_index, right_index - left_index));
+
+    return sections;
 }

@@ -10,18 +10,21 @@ private:
 
 	void setupTransitions(const std::vector<std::string>&);
 
-    std::istream & operator>>(std::istream& in_stream) override;
 
 public:
 
-	explicit FiniteStateMachine(const std::string&);
+    std::istream & operator>>(std::istream& in_stream) override;
+
+	FiniteStateMachine();
 
 	~FiniteStateMachine() override;
 
-	void addState(const State&) override;
+	void add_state(const State &new_state) override;
 
 	void addTransition(const State&, const Transition&) override;
 
 	bool accept(const std::string&) override;
 
 };
+
+std::istream& operator>>(std::istream& is, FiniteStateMachine& fsm);

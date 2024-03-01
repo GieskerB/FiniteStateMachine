@@ -23,7 +23,7 @@ The program expects an input file named "Input," which can be either a .tm file 
 ### Turing Machine (TM) Specific Format
 
 - **Alphabet (Line 5):**
-    - List of symbols representing the tape alphabet.
+    - List of symbols representing the tape m_alphabet.
 
 - **Blank Symbol (Line 6):**
     - Symbol representing the blank (empty) space on the tape.

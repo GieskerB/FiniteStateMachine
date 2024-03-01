@@ -32,7 +32,7 @@ public:
     State();
 
     // Explicit Constructor:
-    explicit State(std::string , bool final = false, bool initial = false);
+    explicit State(std::string , bool initial = false , bool final = false);
 
     // Copy constructor:
     State(const State& );
@@ -52,7 +52,7 @@ public:
     State& operator=(State&& ) noexcept ;
 
     // Getter Methods
-    [[nodiscard]] const std::string & getName() const;
+    [[nodiscard]] const std::string & get_name() const;
 
     [[nodiscard]] bool hasFollowState(char letter, char flags) const;
 
@@ -62,7 +62,7 @@ public:
 
     [[nodiscard]] std::vector<State> getFollowStates(char letter, char flag) const;
 
-    [[nodiscard]] bool isInitial() const;
+    [[nodiscard]] bool is_initial() const;
 
     [[nodiscard]] bool isFinal() const;
 
