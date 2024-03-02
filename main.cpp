@@ -2,34 +2,22 @@
 #include "includes.inc"
 
 #include <iostream>
-
-/*
-class B {
-public:
-    virtual std::istream& operator>>(std::istream& is) = 0;
-};
-
-class A : public B {
-public:
-    std::istream& operator>>(std::istream& is) override;
-};
-
-std::istream& A::operator>>(std::istream& is) {
-    // Doing stuff
-    return is;
-}
-// Definition des Eingabeoperators für Objekte der Klasse A
-std::istream& operator>>(std::istream& is, A& obj) {
-    return obj.operator>>(is);
-}
-
- */
-
+#include <fstream>
 
 int main() {
     FiniteStateMachine fsm;
 
-    std::cin >> fsm;
+    std::ifstream file{"../Input.fsm"};
+
+    file >> fsm;
+
+    std::cout << "Test word\n===";
+
+    std::string input;
+    std::cin >> input;
+
+    fsm.accept(input);
+
 
 	return 0;
 }

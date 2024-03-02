@@ -19,7 +19,7 @@ public:
 
 	void add_state(const State&) override;
 
-	void addTransition(const State&, const Transition&) override;
+	void add_transition(State&, const Transition&) override;
 
 	bool accept(const std::string&) override;
 

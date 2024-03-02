@@ -1,11 +1,11 @@
 # FiniteStateMachine
-This is an attempt to create and simulate different types of finite state machines in C++
+This is an attempt to create and simulate different types of finite p_target_state machines in C++
 
-### Finite state machines that are planed:
+### Finite p_target_state machines that are planed:
 * DeterministicFiniteMachine
 * StackMachine
 * TuringMachine
-  * If possible we will also give the use the option to create a non deterministic version for each Machine
+  * If possible we will also give the use the option to create a non m_deterministic version for each Machine
 
 Erstellen eines solchen Atomaten:
 

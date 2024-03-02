@@ -1,44 +1,43 @@
 #include "../../include/machine/Transition.hpp"
 
 void Transition::check_dummy() const {
-    if (this->dummy) throw std::runtime_error("Invalid use of dummy object.");
+    if (this->m_dummy) throw std::runtime_error("Invalid use of m_dummy object.");
 }
 
 
 /*
- * Letter is the input letter, flag0 is what to be written, flag1 is L or R
- * A FSM has no flags
+ * Letter is the input m_letter, flag0 is what to be written, flag1 is L or R
+ * A FSM has no m_flags
  */
-Transition::Transition() : state(nullptr), letter{'\0'}, dummy{true} {}
+Transition::Transition() : p_target_state(nullptr), m_letter{'\0'}, m_dummy{true} {}
+
+Transition::Transition(char letter, State &state) :
+        p_target_state{&state}, m_letter{letter}, m_dummy{false}, m_flags{} {
+
+}
 
 Transition::Transition(char letter, State &state, std::initializer_list<char> flags) :
-        state{&state},  letter{letter}, dummy{false}, flags{flags}{
+        p_target_state{&state}, m_letter{letter}, m_dummy{false}, m_flags{flags} {
 
 }
 
 Transition::Transition(const Transition &other_transition) {
-    this->state = other_transition.state;
-    this->letter = other_transition.letter;
-    this->dummy = other_transition.dummy;
-    this->flags = other_transition.flags;
+    this->p_target_state = other_transition.p_target_state;
+    this->m_letter = other_transition.m_letter;
+    this->m_dummy = other_transition.m_dummy;
+    this->m_flags = other_transition.m_flags;
 }
 
-Transition::Transition(Transition &&other_transition)  noexcept {
-    this->state = other_transition.state;
-    this->letter = other_transition.letter;
-    this->dummy = other_transition.dummy;
-    this->flags = other_transition.flags;
+Transition::Transition(Transition &&other_transition) noexcept {
+    this->p_target_state = other_transition.p_target_state;
+    this->m_letter = other_transition.m_letter;
+    this->m_dummy = other_transition.m_dummy;
+    this->m_flags = other_transition.m_flags;
 }
 
 Transition::~Transition() = default;
 
-Transition &Transition::operator=(const Transition &other_transition) {
-    this->state = other_transition.state;
-    this->letter = other_transition.letter;
-    this->dummy = other_transition.dummy;
-    this->flags = other_transition.flags;
-    return *this;
-}
+Transition &Transition::operator=(const Transition &other_transition) = default;
 
 // Move Assignment:
 Transition &Transition::operator=(Transition &&) noexcept {
@@ -47,21 +46,47 @@ Transition &Transition::operator=(Transition &&) noexcept {
 }
 
 
-const State &Transition::getFollowState() const {
-    return *this->state;
+const State &Transition::get_target_state() const {
+    return *this->p_target_state;
 }
 
-char Transition::getLetter() const {
-    return this->letter;
+char Transition::get_letter() const {
+    return this->m_letter;
 }
 
-std::vector<char> Transition::getFlags() const {
-    return this->flags;
+bool Transition::is_valid(char letter, const std::vector<char>& flags) const {
+    bool do_flags_match{m_flags.size() == flags.size()};
+    for(int i{0}; do_flags_match and i < m_flags.size(); i++) {
+        if(flags[i] != m_flags[i]) {
+            do_flags_match = false;
+        }
+    }
+    return  do_flags_match and letter == this->m_letter;
 }
 
-bool Transition::isValid(char letter, char flag0) const {
-    // flag0 is currently used by the TM als the second argument
-    // to determine which Transition to pick.
-    return letter == this->letter and flag0 == this->flags[0];
+std::string Transition::to_string() const{
+
+    std::string str;
+    if (m_dummy) {
+        str = "Dummy";
+    } else {
+        str = m_letter;
+        if(!m_flags.empty()) {
+            str += "( ";
+            for(const auto & flag: m_flags) {
+                str+= flag;
+                str+= ' ';
+            }
+            str += ')';
+        }
+        str += "->" + p_target_state->get_name();
+    }
+
+    return '[' + str + ']';
+
 }
+
+
+
+
 

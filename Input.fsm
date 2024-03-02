@@ -1,18 +1,18 @@
-// This will be a DFM
+// This will be a FSM
 
-// Second to last Letter must be an 'a'
+// Word must end with 'aba'
 
-A,B,C,D
-A
-C,D
+S0,S1,S2,S3
+S0
+S3
 a,b
 {
-    A,a->B
-    A,b->A
-    B,a->C
-    B,b->D
-    C,a->C
-    C,b->D
-    D,a->B
-    D,b->A
+    S0,a->S1
+    S0,b->S0
+    S1,a->S1
+    S1,b->S2
+    S2,a->S3
+    S2,b->S0
+    S3,a->S1
+    S3,b->S2
 }

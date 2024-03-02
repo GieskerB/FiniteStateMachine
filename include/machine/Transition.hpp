@@ -6,8 +6,8 @@
 
 
 /*
- *  Strong and weak ownership: Transition does not "own" the state it points to. This is accomplished by using a
- *  reference to the state instead of a member variable or pointer.
+ *  Strong and weak ownership: Transition does not "own" the p_target_state it points to. This is accomplished by using a
+ *  reference to the p_target_state instead of a member variable or pointer.
  */
 
 class State;
@@ -16,16 +16,16 @@ class Transition {
 
 protected:
 
-    // Reference to the "target" of the transitions
-    State *state;
+    // Reference to the "target" of the m_transitions
+    State *p_target_state;
 
-    // This is the letter that will be checked / writing when using this Transition
-    char letter;
+    // This is the m_letter that will be checked / writing when using this Transition
+    char m_letter;
 
-    bool dummy;
+    bool m_dummy;
 
     // Different Flags useful for different type of machines. Necessary for storing extra information.
-    std::vector<char> flags;
+    std::vector<char> m_flags;
 
     void check_dummy() const;
 
@@ -33,8 +33,9 @@ public:
 
     //Standard constructors:
     Transition();
+    // Explicit Constructors:
 
-    // Explicit Constructor:
+    Transition(char letter, State &state);
     Transition(char letter, State &state, std::initializer_list<char> flags);
 
     // Copy constructor:
@@ -52,20 +53,17 @@ public:
     // Move Assignment:
     Transition& operator=(Transition&& ) noexcept ;
 
-
     static const Transition DUMMY;
 
     // Getter Methods
-    const State &getFollowState() const;
+    const State &get_target_state() const;
 
-    char getLetter() const;
-
-    std::vector<char> getFlags() const;
+    char get_letter() const;
 
     // Checks if latter (and flag) are the same
-    bool isValid(char letter, char flag = 2) const;
+    [[nodiscard]] bool is_valid(char letter, const std::vector<char> &flags) const;
 
-    // toString Method
-    std::string toString();
+    // to_string Method
+    std::string to_string() const;
 
 };

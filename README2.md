@@ -12,7 +12,7 @@ The program expects an input file named "Input," which can be either a .tm file 
     - List of nonterminal symbols separated by commas (e.g. A, B, C, D).
 
 - **Start State (Line 2):**
-    - Single nonterminal symbol representing the start state.
+    - Single nonterminal symbol representing the start p_target_state.
 
 - **Accepting States (Line 3):**
     - List of nonterminal symbols representing the accepting m_states.

@@ -9,53 +9,48 @@ const State State::DUMMY{};
 
 
 void State::check_dummy() const {
-    if (this->dummy) throw std::runtime_error("Invalid use of dummy object.");
+    if (this->m_dummy) throw std::runtime_error("Invalid use of m_dummy object!\n");
 }
 
 /*
  * Constructors & Destructor:
  */
 
-State::State() : initial{false}, final{false}, dummy{true} {}
+State::State() : m_initial{false}, m_final{false}, m_dummy{true} {}
 
 State::State(std::string name, bool initial, bool final) :
-        name{std::move(name)}, initial{initial}, final{final}, dummy{false} {
-    std::cout << this->toString() << "is alive now\n";
+        m_name{std::move(name)}, m_initial{initial}, m_final{final}, m_dummy{false} {
+    std::cout <<"Create: " << this->to_string() << "\n";
 }
 
-State::State(const State &other_state) : name{other_state.name}, initial{other_state.initial}, final{other_state.final},
-                                         dummy{other_state.dummy}, transitions{other_state.transitions} {
-    std::cout << this->toString() << "copied successfully\n";
+State::State(const State &other_state) : m_name{other_state.m_name}, m_initial{other_state.m_initial},
+                                         m_final{other_state.m_final},
+                                         m_dummy{other_state.m_dummy}, m_transitions{other_state.m_transitions} {
+    std::cout <<"Copy: " << this->to_string() << "\n";
 }
 
-State::State(State &&other_state) : name{other_state.name}, initial{other_state.initial}, final{other_state.final},
-                                    dummy{other_state.dummy}, transitions{other_state.transitions} {
-    std::cout << this->toString() << "moved successfully\n";
+State::State(State &&other_state) noexcept: m_name{other_state.m_name}, m_initial{other_state.m_initial},
+                                            m_final{other_state.m_final},
+                                            m_dummy{other_state.m_dummy}, m_transitions{other_state.m_transitions} {
+    std::cout <<"Move: " << this->to_string() << "\n";
 }
 
 State::~State() {
-    std::cout << this->toString() << "is dead now\n";
+    std::cout <<"Dead: " << this->to_string() << "\n";
 }
 
 /*
  * operator overloading
  */
 
-State& State::operator=(const State& other_state) {
-    this->name = other_state.name;
-    this->initial = other_state.initial;
-    this->final = other_state.final;
-    this->dummy = other_state.dummy;
-    this->transitions = other_state.transitions;
-    return *this;
-}
+State &State::operator=(const State &other_state) = default;
 
-State& State::operator=(State&& other_state)  noexcept {
-    this->name = other_state.name;
-    this->initial = other_state.initial;
-    this->final = other_state.final;
-    this->dummy = other_state.dummy;
-    this->transitions = other_state.transitions;
+State &State::operator=(State &&other_state) noexcept {
+    this->m_name = other_state.m_name;
+    this->m_initial = other_state.m_initial;
+    this->m_final = other_state.m_final;
+    this->m_dummy = other_state.m_dummy;
+    this->m_transitions = other_state.m_transitions;
     return *this;
 }
 
@@ -64,78 +59,103 @@ State& State::operator=(State&& other_state)  noexcept {
  * getter
  */
 const std::string &State::get_name() const {
-    return this->name;
+    return this->m_name;
 }
 
 bool State::is_initial() const {
-    return this->initial;
+    return this->m_initial;
 }
 
-bool State::isFinal() const {
-    return this->final;
+bool State::is_final() const {
+    return this->m_final;
 }
 
-/*
- * Successor methods:
- */
 
-bool State::hasFollowState(char letter, char flags) const {
-    return false;
+State State::get_next_state(char letter) const {
+    return get_next_state(letter, std::vector<char>{});
 }
 
-const State &State::getFollowState(char letter, char flag = '\0') const {
-    for (int i = 0; i < this->transitions.size(); i++) {
-        if (this->transitions[i].isValid(letter, flag)) {
-            return this->transitions[i].getFollowState();
+State State::get_next_state(char letter, const std::vector<char> &flags) const {
+    auto results = get_next_states(letter, flags);
+    return results.empty() ? State::DUMMY : results[0];
+
+}
+
+State State::get_next_random_state(char letter) const {
+    return get_next_random_state(letter, std::vector<char>{});
+}
+
+State State::get_next_random_state(char letter, const std::vector<char> &flags) const {
+    auto results = get_next_states(letter, flags);
+    if (results.empty()) {
+        return State::DUMMY;
+    }
+    int rand_index = std::rand() % results.size();
+    return results[rand_index];
+}
+
+
+std::vector<State> State::get_next_states(char letter) const {
+    return get_next_states(letter, std::vector<char>{});
+}
+
+std::vector<State> State::get_next_states(char letter, const std::vector<char> &flags) const {
+    std::vector<State> results{};
+    for (const auto &transition: this->m_transitions) {
+        if (transition.is_valid(letter, flags)) {
+            results.push_back(transition.get_target_state());
         }
     }
-    return State::DUMMY;
+    return results;
 }
 
-
-const State &State::getRandomState() const {
-    int randIndex = std::rand() % this->transitions.size();
-    return this->transitions[randIndex].getFollowState();
-}
-
-std::vector<State> State::getFollowStates(char letter, char flag = '\0') const {
-    std::vector<State> outp{};
-    for (int i = 0; i < this->transitions.size(); i++) {
-        if (this->transitions[i].isValid(letter, flag)) {
-            outp.push_back(this->transitions[i].getFollowState());
-        }
-    }
-    return outp;
-}
 
 /*
  * Adding a transition
  */
 
-void State::addTransition(const Transition &transition) {
-    this->transitions.push_back(transition);
+bool State::add_transition(const Transition &new_transition) {
+    bool deterministic{true};
+    for (const auto &transition: m_transitions) {
+        bool same_target = transition.get_target_state().get_name() == new_transition.get_target_state().get_name();
+        if (same_target and
+            transition.get_letter() == new_transition.get_letter()) {
+            throw std::runtime_error("No duplicate Transitions allowed in one state!\n");
+        } else if (same_target) {
+            deterministic = false;
+        }
+    }
+    this->m_transitions.push_back(new_transition);
+    return deterministic;
 }
 
+std::string State::to_string() const {
 
-
-
-
-
-std::string State::toString() {
-
-    std::string internalValues;
-    if (dummy) {
-        internalValues = "Dummy";
+    std::string str;
+    if (m_dummy) {
+        str = "Dummy";
     } else {
-        internalValues = this->name + ": ";
-        internalValues += (this->initial ? "is Init" : "notInit");
-        internalValues += " ";
-        internalValues += (this->final ? "is Fin" : "notFin");
-        internalValues += " Number of Transitions: ";
-        internalValues += std::to_string(this->transitions.size());
+        str = m_name;
+        if(m_initial and m_final) {
+            str+= " <B>: ";
+        } else if(m_initial) {
+            str+= " <I>: ";
+        }else if(m_final) {
+            str+= " <F>: ";
+        }else  {
+            str+= " <N>: ";
+        }
+
+        for(const auto& transition: m_transitions) {
+            str += transition.to_string();
+        }
     }
 
-    return "State:[" + internalValues + "]";
+    return '[' + str + ']';
+}
+
+bool State::is_dummy() const {
+    return m_dummy;
 }
 
 
