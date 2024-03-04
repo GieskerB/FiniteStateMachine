@@ -14,7 +14,7 @@ void Machine::add_letter(const std::string & new_letter) {
 }
 
 Machine::Machine() :
-        p_initial_state(nullptr), p_current_state(nullptr), m_deterministic(true) {
+        m_initial_state_index{-1}, m_deterministic{true} {
 
 }
 

@@ -12,7 +12,7 @@ protected:
 	std::vector<State> m_states;
     std::vector<char> m_alphabet;
 
-	State *p_initial_state ,*p_current_state;
+    int m_initial_state_index;
 
 	bool m_deterministic;
 
@@ -24,7 +24,7 @@ public:
 
 	virtual ~Machine();
 
-	virtual void add_state(const State&) = 0;
+	virtual void add_state( State&) = 0;
 
     void add_letter(const std::string&);
 

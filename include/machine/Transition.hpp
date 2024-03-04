@@ -22,17 +22,13 @@ protected:
     // This is the m_letter that will be checked / writing when using this Transition
     char m_letter;
 
-    bool m_dummy;
-
     // Different Flags useful for different type of machines. Necessary for storing extra information.
     std::vector<char> m_flags;
-
-    void check_dummy() const;
 
 public:
 
     //Standard constructors:
-    Transition();
+    Transition() = delete;
     // Explicit Constructors:
 
     Transition(char letter, State &state);
@@ -56,7 +52,7 @@ public:
     static const Transition DUMMY;
 
     // Getter Methods
-    const State &get_target_state() const;
+    const State * get_target_state() const;
 
     char get_letter() const;
 

@@ -17,7 +17,7 @@ public:
 
 	~TuringMachine() override;
 
-	void add_state(const State&) override;
+	void add_state(State&) override;
 
 	void add_transition(State&, const Transition&) override;
 

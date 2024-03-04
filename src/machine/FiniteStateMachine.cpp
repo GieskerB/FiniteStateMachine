@@ -35,24 +35,23 @@ std::istream &FiniteStateMachine::operator>>(std::istream &in_stream) {
                         throw std::runtime_error("Initial p_target_state '" + *initial_non_terminal.begin() +
                                                  "' must be an element of the prior defined states!\n");
                     }
-
                     break;
 
                 case 2:
                     // Read the m_final non-terminal symbol
                     final_non_terminals = separate_by_comma(line);
-                    for (auto &final_non_terminal: final_non_terminals) {
+                    for (const auto &final_non_terminal: final_non_terminals) {
                         if (!all_non_terminals.contains(final_non_terminal)) {
                             throw std::runtime_error("Final state '" + final_non_terminal +
                                                      "' must be an element of the prior defined states!\n");
                         }
                     }
 
-                    for (auto &name: all_non_terminals) {
-                        add_state(State{name, initial_non_terminal.contains(name),
-                                        final_non_terminals.contains(name)});
+                    for (const auto &name: all_non_terminals) {
+                        State temp_state{name, initial_non_terminal.contains(name),
+                                         final_non_terminals.contains(name)};
+                        add_state(temp_state);
                     }
-
                     break;
                 case 3:
                     // Read all terminal symbols
@@ -91,36 +90,36 @@ std::istream &FiniteStateMachine::operator>>(std::istream &in_stream) {
                         throw std::runtime_error("Error in transition " + line + " third argument has length of zero!\n");
                     }
 
-                    State source_state{}, target_state{};
+                    State* source_state {nullptr}, *target_state {nullptr};
                     char input_symbole{'\0'};
 
-                    for(auto & compare_state: m_states) {
-                        if(compare_state.get_name() == source_state_name) {
-                            source_state = compare_state;
+                    //for( auto & compare_state: m_states) {
+                    for(auto state_iterator{m_states.begin()}; state_iterator != m_states.end(); ++state_iterator) {
+                        if(state_iterator->get_name() == source_state_name) {
+                            source_state = &*state_iterator;
                         }
 
-                        if(compare_state.get_name() == target_state_name) {
-                            target_state = compare_state;
+                        if(state_iterator->get_name() == target_state_name) {
+                            target_state = &*state_iterator;
                         }
                     }
-
-                    for (auto & compare_symbole: m_alphabet) {
+                    for (const char compare_symbole: m_alphabet) {
                         if(compare_symbole == input_symbole_name[0]) {
                             input_symbole = compare_symbole;
                         }
                     }
 
-                    if(source_state.is_dummy()) {
+                    if(source_state == nullptr) {
                         throw std::runtime_error("Error in transition " + line + " first argument does not match any previous declared states!\n");
                     }
                     if(input_symbole == '\0') {
                         throw std::runtime_error("Error in transition " + line + " second argument does not match any previous declared symobles!\n");
                     }
-                    if(target_state.is_dummy()) {
+                    if(target_state == nullptr) {
                         throw std::runtime_error("Error in transition " + line + " third argument does not match any previous declared states!\n");
                     }
 
-                   add_transition(source_state, Transition{input_symbole, target_state});
+                    add_transition(*source_state, Transition{input_symbole, *target_state});
 
 
             }
@@ -139,16 +138,16 @@ std::istream &operator>>(std::istream &is, FiniteStateMachine &fsm) {
     return fsm.operator>>(is);
 }
 
-void FiniteStateMachine::add_state(const State &new_state) {
+void FiniteStateMachine::add_state( State &new_state) {
     for (auto &state: m_states) {
         if (state.get_name() == new_state.get_name()) {
             throw std::runtime_error("not allowed to use the same name twice for two different states!\n");
         }
     }
-    m_states.push_back(new_state);
-    if (new_state.is_initial() && p_initial_state == nullptr) {
-        p_initial_state = &m_states[m_states.size() - 1];
-    } else if (new_state.is_initial() &&  p_initial_state != nullptr) {
+    m_states.push_back(std::move(new_state));
+    if (new_state.is_initial() && m_initial_state_index == -1) {
+        m_initial_state_index = m_states.size()-1;
+    } else if (new_state.is_initial() &&  m_initial_state_index != -1) {
         std::cout << new_state.get_name();
         throw std::runtime_error(
                 "FSM only allows one initial state!\n");
@@ -172,13 +171,14 @@ void FiniteStateMachine::add_transition(State &from,
 
 bool FiniteStateMachine::accept(const std::string &word) {
 
-    State* next_state{nullptr};
-    p_current_state = p_initial_state;
-    for(const auto& state: m_states) {
-        std::cout << state.to_string() << '\n';
+    const State * current_state{&m_states[m_initial_state_index]};
+    for(const auto& letter: word) {
+        current_state = current_state->get_next_state(letter);
+        if(current_state == nullptr) {
+            return false;
+        }
     }
-    for(auto& letter: word) {
-        p_current_state->get_next_state(letter);
-    }
+
+    return current_state->is_final();
 
 }
