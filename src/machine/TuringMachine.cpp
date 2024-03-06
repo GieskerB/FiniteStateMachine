@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include <algorithm>
 
-std::istream & TuringMachine::operator>>(std::istream &in_stream) {
+std::istream & TuringMachine::operator<<(std::istream &in_stream) {
 
     std::string line;
     std::getline(in_stream, line);
@@ -31,12 +31,14 @@ TuringMachine::~TuringMachine() = default;
 
 
 void TuringMachine::add_state( State &newState) {
+    /*
 	if (newState.is_initial() && m_initial_state_index == -1) {
         m_initial_state_index = m_states.size()-1;
 	} else if (newState.is_initial() && m_initial_state_index != -1) {
 		throw std::runtime_error(
 				"Turing-Machine only allows one m_initial State.");
 	}
+     */
 }
 
 void TuringMachine::add_transition(State &from,

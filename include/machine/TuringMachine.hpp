@@ -7,15 +7,13 @@
 
 class TuringMachine: public Machine {
 
-private:
-
-    std::istream & operator>>(std::istream& in_stream) override;
-
 public:
 
 	 TuringMachine();
 
 	~TuringMachine() override;
+
+    std::istream & operator<<(std::istream& in_stream) override;
 
 	void add_state(State&) override;
 

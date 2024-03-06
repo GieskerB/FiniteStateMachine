@@ -2,6 +2,7 @@
 
 #include <string>
 #include <set>
+#include <optional>
 
 #include "State.hpp"
 
@@ -12,11 +13,11 @@ protected:
 	std::vector<State> m_states;
     std::vector<char> m_alphabet;
 
-    int m_initial_state_index;
+    std::optional<std::size_t> m_initial_state_index;
+
 
 	bool m_deterministic;
 
-    virtual std::istream& operator>>(std::istream& in_stream) = 0;
 
 public:
 
@@ -27,6 +28,8 @@ public:
 	virtual void add_state( State&) = 0;
 
     void add_letter(const std::string&);
+
+    virtual std::istream& operator<<(std::istream& in_stream) = 0;
 
 	virtual void add_transition(State&, const Transition&) = 0;
 

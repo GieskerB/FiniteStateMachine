@@ -6,7 +6,9 @@ FiniteStateMachine::FiniteStateMachine() = default;
 FiniteStateMachine::~FiniteStateMachine() = default;
 
 
-std::istream &FiniteStateMachine::operator>>(std::istream &in_stream) {
+
+
+std::istream &FiniteStateMachine::operator<<(std::istream &in_stream) {
 
     std::string line;
     std::set<std::string> all_non_terminals{};
@@ -30,9 +32,9 @@ std::istream &FiniteStateMachine::operator>>(std::istream &in_stream) {
                     // Read the m_initial non-terminal symbol
                     initial_non_terminal = separate_by_comma(line);
                     if (initial_non_terminal.size() > 1) {
-                        throw std::runtime_error("Only one m_initial p_target_state is allowed for a FSM!\n");
+                        throw std::runtime_error("Only one initial state is allowed for a FSM!\n");
                     } else if (!all_non_terminals.contains(*initial_non_terminal.begin())) {
-                        throw std::runtime_error("Initial p_target_state '" + *initial_non_terminal.begin() +
+                        throw std::runtime_error("Initial target_state '" + *initial_non_terminal.begin() +
                                                  "' must be an element of the prior defined states!\n");
                     }
                     break;
@@ -59,7 +61,7 @@ std::istream &FiniteStateMachine::operator>>(std::istream &in_stream) {
                     for (auto &terminal: all_terminals) {
                         if (all_non_terminals.contains(terminal)) {
                             throw std::runtime_error(
-                                    "Temrinal symbole must not have the same m_name as a non terminal: '" + terminal +
+                                    "Terminal symbole must not have the same m_name as a non terminal: '" + terminal +
                                     "'!\n");
                         }
                         add_letter(terminal);
@@ -68,7 +70,7 @@ std::istream &FiniteStateMachine::operator>>(std::istream &in_stream) {
                 case 4:
                     // Opening Bracket for the list of m_transitions
                     if (line != "{") {
-                        throw std::runtime_error("Formation error. Exprected '{' in line 5!\n");
+                        throw std::runtime_error("Formation error. Expected '{' in line 5!\n");
                     }
                     break;
                 default:
@@ -134,9 +136,12 @@ std::istream &FiniteStateMachine::operator>>(std::istream &in_stream) {
     return in_stream;
 }
 
+
+ /*
 std::istream &operator>>(std::istream &is, FiniteStateMachine &fsm) {
     return fsm.operator>>(is);
 }
+ */
 
 void FiniteStateMachine::add_state( State &new_state) {
     for (auto &state: m_states) {
@@ -145,12 +150,14 @@ void FiniteStateMachine::add_state( State &new_state) {
         }
     }
     m_states.push_back(std::move(new_state));
-    if (new_state.is_initial() && m_initial_state_index == -1) {
-        m_initial_state_index = m_states.size()-1;
-    } else if (new_state.is_initial() &&  m_initial_state_index != -1) {
-        std::cout << new_state.get_name();
-        throw std::runtime_error(
-                "FSM only allows one initial state!\n");
+
+    if(new_state.is_initial()) {
+        if(m_initial_state_index.has_value()) {
+            throw std::runtime_error(
+                    "FSM only allows one initial state!\n");
+        } else {
+            m_initial_state_index = m_states.size()-1;
+        }
     }
 }
 
@@ -171,7 +178,7 @@ void FiniteStateMachine::add_transition(State &from,
 
 bool FiniteStateMachine::accept(const std::string &word) {
 
-    const State * current_state{&m_states[m_initial_state_index]};
+    const State * current_state{&m_states[m_initial_state_index.value()]};
     for(const auto& letter: word) {
         current_state = current_state->get_next_state(letter);
         if(current_state == nullptr) {

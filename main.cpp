@@ -29,6 +29,18 @@ bool testing_input_input_choice( std::string &test) {
 }
 
 int main() {
+
+    Machine* fsm;
+    fsm = new FiniteStateMachine();
+
+    std::ifstream file {"../Input.fsm"};
+
+    *fsm << file;
+
+    std::cout << fsm->accept("abbababa");
+
+    /*
+
     bool is_turing_machine;
     Machine *machine;
     std::string user_input{0};
@@ -68,14 +80,27 @@ int main() {
         std::cin >> user_input;
     } while (!testing_input_input_choice(user_input));
 
+    std::cout << "fjasdflhkaskd";
+
     if(user_input == "1") {
         std::string file_name = "Input";
         file_name+= is_turing_machine ? ".tm" : ".fsm";
         std::ifstream file(file_name);
-        //file >> machine;
+
+        FiniteStateMachine fsm{};
+
+        std::cout << file_name;
+
+        file >> fsm;
+
+        //file >> * machine;
+        //file >> * dynamic_cast<FiniteStateMachine* > (machine);
     } else {
 
     }
 
+
+
+     */
     return 0;
 }

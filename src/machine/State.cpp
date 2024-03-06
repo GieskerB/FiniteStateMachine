@@ -30,7 +30,7 @@ State::State(State &&other) noexcept
         :  m_name(std::move(other.m_name)),
           m_initial(other.m_initial), m_final(other.m_final),
           m_transitions(std::move(other.m_transitions)) {
-    //std::cout << "Move: " << to_string() << "\n";
+    std::cout << "Move: " << to_string() << "\n";
 }
 
 

@@ -14,11 +14,12 @@ void Machine::add_letter(const std::string & new_letter) {
 }
 
 Machine::Machine() :
-        m_initial_state_index{-1}, m_deterministic{true} {
+        m_initial_state_index{std::nullopt}, m_deterministic{true} {
 
 }
 
 Machine::~Machine() = default;
+
 
 void remove_spaces(std::string& str) {
     str.erase(remove_if(str.begin(), str.end(), isspace), str.end());

@@ -4,15 +4,13 @@
 
 class FiniteStateMachine: public Machine {
 
-
 public:
-
 
 	FiniteStateMachine();
 
 	~FiniteStateMachine() override;
 
-    std::istream & operator>>(std::istream& in_stream) override;
+    std::istream & operator<<(std::istream& in_stream) override;
 
     void add_state(State&) override;
 
@@ -21,5 +19,3 @@ public:
 	bool accept(const std::string&) override;
 
 };
-
-std::istream& operator>>(std::istream& is, FiniteStateMachine& fsm);
