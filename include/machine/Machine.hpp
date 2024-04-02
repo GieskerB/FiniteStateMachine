@@ -16,7 +16,7 @@ protected:
     std::optional<std::size_t> m_initial_state_index;
 
 
-	bool m_deterministic;
+	bool m_deterministic{false};
 
 
 public:
@@ -34,6 +34,8 @@ public:
 	virtual void add_transition(State&, const Transition&) = 0;
 
 	virtual bool accept(const std::string&) = 0;
+
+    virtual std::string generate_random_word () = 0;
 
 };
 

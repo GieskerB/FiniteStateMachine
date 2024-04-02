@@ -2,13 +2,13 @@
 
 #include "Machine.hpp"
 
-class FiniteStateMachine: public Machine {
+class FiniteAutomaton: public Machine {
 
 public:
 
-	FiniteStateMachine();
+	FiniteAutomaton();
 
-	~FiniteStateMachine() override;
+	~FiniteAutomaton() override;
 
     std::istream & operator<<(std::istream& in_stream) override;
 
@@ -18,4 +18,5 @@ public:
 
 	bool accept(const std::string&) override;
 
+    std::string generate_random_word() override;
 };

@@ -30,7 +30,7 @@ State::State(State &&other) noexcept
         :  m_name(std::move(other.m_name)),
           m_initial(other.m_initial), m_final(other.m_final),
           m_transitions(std::move(other.m_transitions)) {
-    std::cout << "Move: " << to_string() << "\n";
+    //std::cout << "Move: " << to_string() << "\n";
 }
 
 
@@ -116,6 +116,14 @@ std::vector<const State *> State::get_next_states(char letter, const std::vector
         }
     }
     return results;
+}
+
+const Transition *State::get_random_transition() const {
+    if(m_transitions.empty()) {
+        return nullptr;
+    }
+    int rand_index = std::rand() % m_transitions.size();
+    return & m_transitions[rand_index];
 }
 
 

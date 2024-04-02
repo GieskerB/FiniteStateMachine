@@ -1,4 +1,4 @@
-// This will be a FSM
+// This will be a FA
 
 // Word must end with 'aba'
 
@@ -6,6 +6,7 @@ S0,S1,S2,S3
 S0
 S3
 a,b
+
 {
     S0,a->S1
     S0,b->S0

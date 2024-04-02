@@ -21,4 +21,6 @@ public:
 
 	bool accept(const std::string&) override;
 
+    std::string generate_random_word() override;
+
 };

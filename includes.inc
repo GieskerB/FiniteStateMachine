@@ -5,5 +5,5 @@
 #include "include/machine/State.hpp"
 #include "include/machine/Transition.hpp"
 #include "include/machine/Machine.hpp"
-#include "include/machine/FiniteStateMachine.hpp"
+#include "include/machine/FiniteAutomaton.hpp"
 #include "include/machine/TuringMachine.hpp"

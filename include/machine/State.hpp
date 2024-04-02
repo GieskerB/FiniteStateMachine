@@ -39,8 +39,6 @@ public:
     // Destructor:
     ~State();
 
-    static const State DUMMY;
-
     // Copy Assignment:
     State &operator=(const State &);
 
@@ -62,6 +60,9 @@ public:
     [[nodiscard]] std::vector<const State *> get_next_states(char) const;
 
     [[nodiscard]]  std::vector<const State *> get_next_states(char, const std::vector<char> &) const;
+
+
+    [[nodiscard]]  const Transition *get_random_transition() const;
 
 
     [[nodiscard]] bool is_initial() const;

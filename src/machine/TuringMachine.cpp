@@ -50,3 +50,8 @@ bool TuringMachine::accept(const std::string &word) {
 
 	return false;
 }
+
+std::string TuringMachine::generate_random_word() {
+    std::string result;
+    return result;
+}
