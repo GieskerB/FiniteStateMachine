@@ -4,12 +4,19 @@
 #include <iostream>
 #include <fstream>
 
-int main() {
-    bool is_turing_machine;
-    Machine *machine;
-    int user_input_int;
-    std::string user_input_string;
+template<typename Base, typename T>
+inline bool instanceof(const T *ptr) {
+    return dynamic_cast<const Base*>(ptr) != nullptr;
+}
 
+/**
+ * Prints the introduction to the programm and let the user decide which kind of state machine he wants to use.
+ *
+ * @return
+ */
+MachineType intro() {
+    int user_input{0};
+    Machine* machine;
     std::cout << "Welcome to the Finite Automaton (FA) and Turing Machine (TM) Simulator!\n"
                  "\n"
                  "In this program, you can simulate the behavior of two fundamental models of computation: the DEA and the TM. These models are widely used in computer science and theoretical computer science to describe and analyze algorithms and languages.\n"
@@ -19,26 +26,22 @@ int main() {
     do {
         std::cout << "Please select which model you would like to simulate:\n"
                      "\n"
-                     "1. Finite Automaton (FA)\n"
-                     "2. Turing Machine (TM)\n"
+                     "1. Turing Machine (TM)\n"
+                     "2. Finite Automaton (FA)\n"
                      "Enter the number corresponding to your choice and press Enter:\n"
                      "===";
-        std::cin >> user_input_int;
-    } while (std::cin and not(user_input_int == 1 or user_input_int == 2));
+        std::cin >> user_input;
+    } while (std::cin and not(user_input == 1 or user_input == 2));
 
-    if (!std::cin) {
-        std::cerr << "Invalid Input!\n";
-        return 1;
-    }
-
-    if (user_input_int == 1) {
-        machine = new FiniteAutomaton();
-        is_turing_machine = false;
+    if (user_input == 1) {
+        return MachineType::TURING_MACHINE;
     } else {
-        machine = new TuringMachine();
-        is_turing_machine = true;
+        return MachineType::FINITE_AUTOMATON;
     }
+}
 
+int input_machine(Machine* machine ) {
+    int user_input{0};
     do {
         std::cout << "How would you like to input the machine:\n"
                      "\n"
@@ -46,21 +49,28 @@ int main() {
                      "2. Enter it manually via the console?\n"
                      "Enter the number corresponding to your choice and press Enter:\n"
                      "===";
-        std::cin >> user_input_int;
-    } while (std::cin and not(user_input_int == 1 or user_input_int == 2));
+        std::cin >> user_input;
+    } while (std::cin and not(user_input == 1 or user_input == 2));
 
     if (!std::cin) {
         std::cerr << "Invalid Input!\n";
-        delete machine;
         return 1;
     }
 
-
     std::cout << "Starting with input!\n";
     try {
-        if (user_input_int == 1) {
+        if (user_input == 1) {
             std::string file_name = "input";
-            file_name += is_turing_machine ? ".tm" : ".fsm";
+            if(instanceof<TuringMachine>(machine)) {
+                file_name += ".tm";
+            } else if (instanceof<FiniteAutomaton>(machine)) {
+                file_name +=  ".fa";
+            } else {
+                std::cerr << "Invalid state machine type detected!\n";
+                return 1;
+            }
+
+
             std::ifstream file(file_name);
             if(!file.good()) {
                 file.open("../" + file_name);
@@ -78,11 +88,15 @@ int main() {
         }
     } catch (std::runtime_error &e) {
         std::cerr << e.what();
-        delete machine;
         return 2;
     }
-
     std::cout << "Input was successful!\n";
+    return 0;
+}
+
+int do_action(Machine* machine) {
+    int user_input_int{0};
+    std::string user_input_string{};
 
     try {
         do {
@@ -115,8 +129,43 @@ int main() {
         } while (user_input_int != 5);
     } catch (std::runtime_error &e) {
         std::cerr << e.what();
-        delete machine;
         return 2;
+    }
+
+
+    return 0;
+}
+
+int main() {
+    const MachineType machine_type = intro();
+
+    if (!std::cin) {
+        std::cerr << "Invalid Input!\n";
+        return 1;
+    }
+
+    Machine* machine;
+    switch (machine_type.m_index) {
+        case 0:
+            machine = new FiniteAutomaton();
+            break;
+        case 1:
+            machine = new TuringMachine();
+            break;
+        default:
+            // Do nothing
+            break;
+    }
+
+    // If error_code == 0 its false. Otherwise, true.
+    if(int error_code = input_machine(machine)) {
+        delete machine;
+        return error_code;
+    }
+
+    if(int error_code = do_action(machine)) {
+        delete machine;
+        return error_code;
     }
 
     return 0;
